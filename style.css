@@ -1,0 +1,788 @@
+/* ==========================================================================
+   MAAROUF ABDELFATAH — PORTFOLIO STYLESHEET
+   Mobile-first. Plain CSS. No frameworks.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS (CSS variables)
+   Edit colours / spacing / fonts in one place here.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Colour palette: deep navy + teal accent + neutrals */
+  --color-bg: #f6f8fb;          /* page background            */
+  --color-surface: #ffffff;     /* cards / panels             */
+  --color-text: #17263b;        /* main text (near-black navy) */
+  --color-muted: #5c6b7d;       /* secondary text             */
+  --color-border: #e3e9f0;      /* hairline borders           */
+
+  --color-primary: #143252;     /* deep navy (header, hero)   */
+  --color-primary-soft: #1d4e77;/* lighter navy (hover)       */
+  --color-accent: #0a7f76;      /* teal accent (links, CTAs)  */
+  --color-accent-dark: #08665f; /* teal hover                 */
+
+  /* Typography */
+  --font-body: "Inter", "Segoe UI", Arial, sans-serif;
+  --font-heading: "Sora", "Segoe UI", Arial, sans-serif;
+
+  /* Spacing scale */
+  --space-xs: 0.5rem;
+  --space-sm: 0.875rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+
+  /* Misc */
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 2px rgba(20, 50, 82, 0.06), 0 8px 24px rgba(20, 50, 82, 0.07);
+  --header-height: 64px;
+}
+
+/* --------------------------------------------------------------------------
+   2. BASE / RESET
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth; /* native smooth scrolling; JS offsets below */
+  scroll-padding-top: calc(var(--header-height) + 8px); /* keep headings clear of sticky nav */
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  line-height: 1.2;
+  margin-top: 0;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Accessible "skip to content" link (hidden until focused) */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 0 var(--radius-sm) 0;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  left: 0;
+  top: 0;
+}
+
+/* Layout helper: constrains content width and centres it */
+.container {
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+/* Narrower containers for text-heavy sections */
+.container--narrow {
+  max-width: 880px;
+}
+
+/* --------------------------------------------------------------------------
+   3. HEADER / NAVIGATION
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--header-height);
+  gap: var(--space-md);
+}
+
+/* Brand: initials with an accent dot */
+.nav__brand {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.nav__brand-dot {
+  color: var(--color-accent);
+}
+
+/* Hamburger toggle button */
+.nav__toggle {
+  display: inline-flex;           /* inline-flex shows on mobile */
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.nav__toggle .icon {
+  width: 22px;
+  height: 22px;
+}
+
+/* Swap hamburger <-> close icon depending on open state */
+.nav__toggle .icon--menu-close { display: none; }
+
+.nav.is-open .icon--menu-open { display: none; }
+.nav.is-open .icon--menu-close { display: block; }
+
+/* Nav list — hidden below desktop, slide-down panel when open */
+.nav__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: none;                  /* mobile: hidden by default */
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+  padding-block: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.nav__list.is-open {
+  display: flex;                  /* mobile: toggled via JS */
+}
+
+.nav__link {
+  display: block;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.nav__link:hover {
+  color: var(--color-accent);
+  background: var(--color-bg);
+}
+
+/* Active link while scrolling — toggled by JS */
+.nav__link.is-active {
+  color: var(--color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   4. HERO
+   -------------------------------------------------------------------------- */
+.hero {
+  background: var(--color-primary);
+  color: #fff;
+  padding-block: var(--space-xl) var(--space-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle decorative accent in the corner (no images, pure CSS) */
+.hero::after {
+  content: "";
+  position: absolute;
+  right: -120px;
+  top: -120px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(10, 127, 118, 0.35), transparent);
+  pointer-events: none;
+}
+
+.hero__inner {
+  position: relative;
+  max-width: 880px;
+}
+
+.hero__eyebrow {
+  margin: 0 0 var(--space-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #7fe3d8;                 /* light teal for contrast on navy */
+}
+
+.hero__title {
+  font-size: clamp(2.1rem, 6vw, 3.25rem);
+  font-weight: 800;
+  margin-bottom: var(--space-sm);
+}
+
+.hero__tagline {
+  font-size: clamp(1.1rem, 3vw, 1.4rem);
+  font-weight: 600;
+  margin: 0 0 var(--space-sm);
+  color: #cfe0ef;
+}
+
+.hero__intro {
+  margin: 0 0 var(--space-md);
+  max-width: 56ch;
+  color: #b6c9dc;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* --------------------------------------------------------------------------
+   5. BUTTONS
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.5rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.btn--primary {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background: var(--color-accent-dark);
+}
+
+/* Light "ghost" button used on the dark hero */
+.btn--ghost {
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #fff;
+}
+
+.btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #fff;
+}
+
+/* --------------------------------------------------------------------------
+   6. GENERIC SECTION SCAFFOLDING
+   -------------------------------------------------------------------------- */
+.section {
+  padding-block: var(--space-xl);
+}
+
+/* Alternate background for alternating sections */
+.section--alt {
+  background: var(--color-surface);
+  border-block: 1px solid var(--color-border);
+}
+
+.section__eyebrow {
+  margin: 0 0 var(--space-xs);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.section__title {
+  font-size: clamp(1.6rem, 4vw, 2.1rem);
+  margin-bottom: var(--space-lg);
+}
+
+/* Generic prose blocks (About text) */
+.prose p {
+  margin: 0 0 var(--space-md);
+  color: var(--color-muted);
+  font-size: 1.0625rem;
+  max-width: 70ch;
+}
+
+/* --------------------------------------------------------------------------
+   7. EXPERIENCE
+   -------------------------------------------------------------------------- */
+.job {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+  box-shadow: var(--shadow);
+}
+
+.job__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
+}
+
+.job__role {
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.job__company {
+  margin: 0;
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+.job__sector {
+  color: var(--color-muted);
+}
+
+.job__dates {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  padding: 0.25rem 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.job__points {
+  margin: 0 0 var(--space-sm);
+  padding-left: 1.15rem;
+}
+
+.job__points li {
+  margin-bottom: 0.4rem;
+  color: var(--color-muted);
+}
+
+/* --------------------------------------------------------------------------
+   8. TAGS (used in Experience + Skills)
+   -------------------------------------------------------------------------- */
+.tags {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.tags li {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-primary-soft);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+}
+
+/* --------------------------------------------------------------------------
+   9. EDUCATION
+   -------------------------------------------------------------------------- */
+.edu-grid {
+  display: grid;
+  grid-template-columns: 1fr;     /* single column on mobile */
+  gap: var(--space-md);
+}
+
+.edu-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.edu-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-accent);
+}
+
+.edu-card__title {
+  font-size: 1.05rem;
+  margin-bottom: 0.35rem;
+}
+
+.edu-card__school {
+  margin: 0 0 0.35rem;
+  color: var(--color-muted);
+  font-size: 0.9375rem;
+}
+
+.edu-card__dates {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   10. PUBLICATIONS
+   Cards rendered from the JS `publications` array — styled to match the
+   Education cards (same surface, border, shadow and hover behaviour).
+   -------------------------------------------------------------------------- */
+.pub-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-md);
+}
+
+/* Each <li> is a grid cell; the card fills it so cards align in height. */
+.pub-item {
+  margin: 0;
+}
+
+.pub-card {
+  height: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.pub-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--color-accent);
+}
+
+/* Title doubles as the external link */
+.pub-card__title {
+  font-size: 1.05rem;
+  margin-bottom: 0.4rem;
+}
+
+.pub-card__title a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.pub-card__title a:hover {
+  color: var(--color-accent);
+}
+
+/* Author list */
+.pub-card__authors {
+  margin: 0 0 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-primary-soft);
+}
+
+/* Venue and date (same accent treatment as .edu-card__dates) */
+.pub-card__meta {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-accent);
+}
+
+/* Short abstract / takeaway */
+.pub-card__summary {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--color-muted);
+}
+
+/* --------------------------------------------------------------------------
+   11. SKILLS
+   -------------------------------------------------------------------------- */
+.skill-group {
+  margin-bottom: var(--space-lg);
+}
+
+.skill-group__title {
+  font-size: 1rem;
+  margin-bottom: var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Small decorative dash before each skill group title */
+.skill-group__title::before {
+  content: "";
+  width: 18px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   12. CONTACT
+   -------------------------------------------------------------------------- */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;     /* stacked on mobile */
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+.contact-info__title {
+  font-size: 1.05rem;
+  margin-bottom: var(--space-sm);
+}
+
+.contact-info__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.contact-info__list li {
+  padding: 0.875rem var(--space-md);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.contact-info__label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin-bottom: 0.15rem;
+}
+
+.contact-info__list a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.contact-info__list a:hover {
+  color: var(--color-accent);
+}
+
+/* Contact form */
+.contact-form {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+  box-shadow: var(--shadow);
+}
+
+.form-field {
+  margin-bottom: var(--space-sm);
+}
+
+.form-field label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  background: var(--color-surface);
+}
+
+.form-field input:invalid,
+.form-field textarea:invalid {
+  border-color: #e5484d;
+}
+
+.form-note {
+  margin: var(--space-sm) 0 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.form-note[data-state="error"] {
+  color: #d0342c;
+}
+
+.form-note[data-state="ok"] {
+  color: var(--color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   13. FOOTER
+   -------------------------------------------------------------------------- */
+.site-footer {
+  background: var(--color-primary);
+  color: #b6c9dc;
+  padding: var(--space-md) 0;
+  font-size: 0.9rem;
+}
+
+.site-footer p {
+  margin: 0;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   14. FADE-IN-ON-SCROLL ANIMATION
+   `.reveal` elements start hidden and animate in when JS observes them.
+   -------------------------------------------------------------------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   15. DESKTOP / TABLET BREAKPOINT (>= 720px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 720px) {
+  /* Nav: show the horizontal menu, hide the hamburger */
+  .nav__toggle {
+    display: none;
+  }
+
+  .nav__list {
+    display: flex;
+    flex-direction: row;
+    gap: 0.15rem;
+    width: auto;
+    padding-block: 0;
+    border-top: none;
+  }
+
+  .nav__link {
+    padding: 0.5rem 0.85rem;
+  }
+
+  /* Hero gets more breathing room */
+  .hero {
+    padding-block: calc(var(--space-xl) * 1.5) var(--space-lg);
+  }
+
+  /* Experience: enlarge job cards */
+  .job {
+    padding: var(--space-lg);
+  }
+
+  /* Education: 2-column grid */
+  .edu-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Publications: 2-column grid */
+  .pub-list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Skills: two-column grid of groups */
+  .skill-group {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    align-items: start;
+    gap: var(--space-md);
+  }
+
+  .skill-group__title {
+    margin-bottom: 0;
+  }
+
+  /* Contact: two columns (info | form) */
+  .contact-grid {
+    grid-template-columns: 1fr 1.25fr;
+  }
+}

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Portfolio of Maarouf Abdelfatah — Full-Stack Developer specializing in Java and Spring Boot back-end engineering." />
+  <title>Maarouf Abdelfatah — Full-Stack Developer</title>
+
+  <!-- Google Fonts: Sora (headings) + Inter (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       SKIP LINK  (accessibility: lets keyboard users jump to content)
+       ============================================================ -->
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ============================================================
+       HEADER / NAVIGATION
+       Sticky nav with a hamburger toggle on small screens.
+       ============================================================ -->
+  <header class="site-header" id="site-header">
+    <nav class="nav container" aria-label="Primary">
+      <!-- Brand (initials) -->
+      <a class="nav__brand" href="#home">MA<span class="nav__brand-dot">.</span></a>
+
+      <!-- Hamburger toggle (visible on mobile only) -->
+      <button
+        class="nav__toggle"
+        id="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-menu"
+        aria-label="Toggle navigation menu"
+      >
+        <!-- hamburger icon -->
+        <svg class="icon icon--menu-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="13" y2="18" />
+        </svg>
+        <!-- close icon -->
+        <svg class="icon icon--menu-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
+          <line x1="6" y1="6" x2="18" y2="18" />
+          <line x1="6" y1="18" x2="18" y2="6" />
+        </svg>
+      </button>
+
+      <!-- Nav links (JS toggles the .is-open class on mobile) -->
+      <ul class="nav__list" id="primary-menu">
+        <li><a class="nav__link" href="#home">Home</a></li>
+        <li><a class="nav__link" href="#about">About</a></li>
+        <li><a class="nav__link" href="#experience">Experience</a></li>
+        <li><a class="nav__link" href="#education">Education</a></li>
+        <li><a class="nav__link" href="#publications">Publications</a></li>
+        <li><a class="nav__link" href="#skills">Skills</a></li>
+        <li><a class="nav__link" href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <!-- ============================================================
+         SECTION 1: HERO
+         ============================================================ -->
+    <section class="hero" id="home" aria-label="Introduction">
+      <div class="container hero__inner">
+        <p class="hero__eyebrow">Full-Stack Developer</p>
+        <h1 class="hero__title">Maarouf&nbsp;Abdelfatah</h1>
+        <p class="hero__tagline">Java / Spring Boot back-end specialist with hands-on front-end experience.</p>
+        <p class="hero__intro">
+          I design and maintain reliable back-end systems in Java and Spring Boot, and I bring them to
+          life with front-end technologies like Angular and Thymeleaf — always following solid engineering
+          practices and Agile delivery.
+        </p>
+        <div class="hero__actions">
+          <!-- CV sits in the project root next to index.html; swap the href when you update it -->
+          <a class="btn btn--primary" href="MAAROUF_ABDELFATAH.pdf" download>Download CV</a>
+          <a class="btn btn--ghost" href="#contact">Contact me</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 2: ABOUT
+         ============================================================ -->
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="container container--narrow">
+        <p class="section__eyebrow">About</p>
+        <h2 class="section__title" id="about-title">A pragmatic engineer focused on the back end</h2>
+        <div class="prose reveal">
+          <p>
+            I am a full-stack developer with a strong specialization in back-end development using
+            <strong>Java and Spring Boot</strong>, and experience with front-end technologies such as
+            <strong>Thymeleaf and Angular</strong>. I also bring DevOps skills and Agile methodologies to the table.
+          </p>
+          <p>
+            I have solid foundations in algorithms and data structures, with expertise in
+            Object-Oriented Programming (OOP) and Aspect-Oriented Programming (AOP). I am a fast,
+            self-driven and ambitious learner, passionate about new challenges and continuous growth.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 3: EXPERIENCE  (reverse-chronological)
+         ============================================================ -->
+    <section class="section section--alt" id="experience" aria-labelledby="experience-title">
+      <div class="container container--narrow">
+        <p class="section__eyebrow">Experience</p>
+        <h2 class="section__title" id="experience-title">Where I've worked</h2>
+
+        <!-- Experience 1 -->
+        <article class="job reveal">
+          <header class="job__head">
+            <div>
+              <h3 class="job__role">Java Software Engineer</h3>
+              <p class="job__company">CGI &middot; Rabat, Morocco <span class="job__sector">(Insurance)</span></p>
+            </div>
+            <p class="job__dates">Sep 2023 &ndash; Present</p>
+          </header>
+          <ul class="job__points">
+            <li>Design, implement and maintain monolithic applications using Java and Spring Boot.</li>
+            <li>Manage Oracle databases and ensure smooth communication between the database layer and back-end services.</li>
+            <li>Write unit tests with JUnit and run functional tests to guarantee software reliability.</li>
+            <li>Participate in Agile ceremonies — daily stand-ups and sprint planning — contributing to efficient project delivery.</li>
+            <li>Use Jira for task tracking, sprint planning and team collaboration, ensuring transparency and good organization of development activities.</li>
+          </ul>
+          <ul class="tags" aria-label="Technologies used at CGI">
+            <li>Spring</li><li>Thymeleaf</li><li>Struts</li><li>REST API</li><li>JUnit</li>
+            <li>Oracle</li><li>Liquibase</li><li>Jenkins</li><li>Postman</li><li>Jira</li>
+          </ul>
+        </article>
+
+        <!-- Experience 2 -->
+        <article class="job reveal">
+          <header class="job__head">
+            <div>
+              <h3 class="job__role">Java Software Engineer</h3>
+              <p class="job__company">RTA Agence &middot; Agadir, Morocco <span class="job__sector">(Hospitality)</span></p>
+            </div>
+            <p class="job__dates">Feb 2023 &ndash; Sep 2023</p>
+          </header>
+          <ul class="job__points">
+            <li>Implemented monolithic applications, including bug fixes and feature improvements according to business needs.</li>
+            <li>Owned front-end development with Angular and resolved client-reported issues through effective debugging.</li>
+            <li>Applied industry best practices — SOLID principles, TDD and common design patterns.</li>
+            <li>Participated in daily stand-ups and client meetings to track progress, unblock issues and keep stakeholders aligned.</li>
+          </ul>
+          <ul class="tags" aria-label="Technologies used at RTA Agence">
+            <li>Spring Boot</li><li>Spring Security</li><li>Hibernate</li><li>PostgreSQL</li>
+            <li>REST API</li><li>Angular</li><li>Git</li><li>GitLab</li>
+          </ul>
+        </article>
+
+        <!-- Experience 3 -->
+        <article class="job reveal">
+          <header class="job__head">
+            <div>
+              <h3 class="job__role">Java Software Engineer</h3>
+              <p class="job__company">Fractalite &middot; Casablanca, Morocco <span class="job__sector">(Hospitality)</span></p>
+            </div>
+            <p class="job__dates">Sep 2022 &ndash; Feb 2023</p>
+          </header>
+          <ul class="job__points">
+            <li>Developed and maintained monolithic applications, fixing anomalies and continuously optimizing features.</li>
+            <li>Contributed to the Angular front-end, analyzing and efficiently resolving incidents reported by clients.</li>
+            <li>Implemented recognized development best practices and design patterns.</li>
+            <li>Took part in daily stand-ups and client meetings to track progress, resolve blockers and align stakeholders.</li>
+          </ul>
+          <ul class="tags" aria-label="Technologies used at Fractalite">
+            <li>Spring Boot</li><li>Hibernate</li><li>PostgreSQL</li><li>REST API</li><li>Angular</li><li>Git</li><li>GitLab</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 4: EDUCATION
+         ============================================================ -->
+    <section class="section" id="education" aria-labelledby="education-title">
+      <div class="container container--narrow">
+        <p class="section__eyebrow">Education</p>
+        <h2 class="section__title" id="education-title">Academic background</h2>
+
+        <div class="edu-grid">
+          <!-- Education 1 -->
+          <article class="edu-card reveal">
+            <h3 class="edu-card__title">Computer Science</h3>
+            <p class="edu-card__school">1337 &mdash; Future Is Loading, Khouribga, Morocco</p>
+            <p class="edu-card__dates">2021 &ndash; 2023</p>
+          </article>
+
+          <!-- Education 2 -->
+          <article class="edu-card reveal">
+            <h3 class="edu-card__title">Master in Business Intelligence</h3>
+            <p class="edu-card__school">Faculty of Science and Technology, Beni Mellal, Morocco</p>
+            <p class="edu-card__dates">2020 &ndash; 2022</p>
+          </article>
+
+          <!-- Education 3 -->
+          <article class="edu-card reveal">
+            <h3 class="edu-card__title">Bachelor's Degree in Computer Science</h3>
+            <p class="edu-card__school">Faculty of Science and Technology, Beni Mellal, Morocco</p>
+            <p class="edu-card__dates">2019 &ndash; 2020</p>
+          </article>
+
+          <!-- Education 4 -->
+          <article class="edu-card reveal">
+            <h3 class="edu-card__title">DEUST &mdash; Mathematics, Computer Science, Physics &amp; Chemistry</h3>
+            <p class="edu-card__school">Faculty of Science and Technology, Beni Mellal, Morocco</p>
+            <p class="edu-card__dates">2017 &ndash; 2019</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 5: PUBLICATIONS
+         Cards are rendered from the `publications` array in script.js —
+         add or edit entries there, no HTML changes needed.
+         ============================================================ -->
+    <section class="section section--alt" id="publications" aria-labelledby="publications-title">
+      <div class="container container--narrow">
+        <p class="section__eyebrow">Publications</p>
+        <h2 class="section__title" id="publications-title">Papers &amp; articles</h2>
+
+        <!-- Populated by script.js -->
+        <ul class="pub-list" id="publications-list"></ul>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 6: SKILLS  (grouped tags — no progress bars)
+         ============================================================ -->
+    <section class="section" id="skills" aria-labelledby="skills-title">
+      <div class="container container--narrow">
+        <p class="section__eyebrow">Skills</p>
+        <h2 class="section__title" id="skills-title">What I work with</h2>
+
+        <div class="skill-group reveal">
+          <h3 class="skill-group__title">Back-end development</h3>
+          <ul class="tags">
+            <li>Java</li><li>Spring Boot</li><li>Spring MVC</li><li>Spring Data</li>
+            <li>Spring Security</li><li>Hibernate / JPA</li><li>JDBC / ORM</li>
+            <li>REST</li><li>SOAP</li><li>Microservices</li><li>Monolithic architecture</li>
+          </ul>
+        </div>
+
+        <div class="skill-group reveal">
+          <h3 class="skill-group__title">Front-end development</h3>
+          <ul class="tags">
+            <li>Angular</li><li>Thymeleaf</li>
+          </ul>
+        </div>
+
+        <div class="skill-group reveal">
+          <h3 class="skill-group__title">Databases</h3>
+          <ul class="tags">
+            <li>MySQL</li><li>PostgreSQL</li><li>SQL Server</li><li>Oracle</li><li>Liquibase</li>
+          </ul>
+        </div>
+
+        <div class="skill-group reveal">
+          <h3 class="skill-group__title">Engineering practices &amp; AI</h3>
+          <ul class="tags">
+            <li>Unit / integration / functional testing</li><li>TDD</li><li>JUnit</li><li>Mockito</li>
+            <li>Clean code</li><li>OOP / AOP</li><li>Functional programming</li><li>Design patterns</li>
+            <li>Machine Learning</li><li>Deep Learning</li>
+          </ul>
+        </div>
+
+        <div class="skill-group reveal">
+          <h3 class="skill-group__title">Tools, platforms &amp; methodologies</h3>
+          <ul class="tags">
+            <li>Git</li><li>GitLab</li><li>Maven</li><li>Jenkins</li><li>Jira</li>
+            <li>Postman</li><li>SonarLint</li><li>Scrum</li><li>Agile</li><li>DevOps</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PROJECTS SECTION (deactivated)
+         Uncomment this section and add your projects to show a card
+         grid. Then add a "Projects" item to the nav list above.
+         ============================================================
+         <section class="section section--alt" id="projects" aria-labelledby="projects-title">
+           <div class="container container--narrow">
+             <p class="section__eyebrow">Projects</p>
+             <h2 class="section__title" id="projects-title">Selected projects</h2>
+             <div class="project-grid">
+               <article class="project-card reveal">
+                 <h3>Project name</h3>
+                 <p>Short description of the project, the stack used and what it achieves.</p>
+                 <a href="#" class="project-card__link">View project</a>
+               </article>
+             </div>
+           </div>
+         </section>
+         ============================================================ -->
+
+    <!-- ============================================================
+         SECTION 7: CONTACT
+         mailto form (no backend — the browser opens the visitor's
+         email app with a pre-filled message).
+         ============================================================ -->
+    <section class="section section--alt" id="contact" aria-labelledby="contact-title">
+      <div class="container container--narrow">
+        <p class="section__eyebrow">Contact</p>
+        <h2 class="section__title" id="contact-title">Let's work together</h2>
+
+        <div class="contact-grid">
+          <!-- Contact details -->
+          <div class="contact-info reveal">
+            <h3 class="contact-info__title">Get in touch</h3>
+            <ul class="contact-info__list">
+              <li>
+                <span class="contact-info__label">Email</span>
+                <a href="mailto:abdelfatahOmaarouf@gmail.com">abdelfatahOmaarouf@gmail.com</a>
+              </li>
+              <li>
+                <span class="contact-info__label">Phone</span>
+                <a href="tel:+212647113789">+212 647 113 789</a>
+              </li>
+              <li>
+                <span class="contact-info__label">Location</span>
+                <span>Fes, Morocco</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Mailto contact form -->
+          <form class="contact-form reveal" id="contact-form" novalidate>
+            <div class="form-field">
+              <label for="field-name">Name</label>
+              <input type="text" id="field-name" name="name" autocomplete="name" required />
+            </div>
+            <div class="form-field">
+              <label for="field-email">Email</label>
+              <input type="email" id="field-email" name="email" autocomplete="email" required />
+            </div>
+            <div class="form-field">
+              <label for="field-message">Message</label>
+              <textarea id="field-message" name="message" rows="5" required></textarea>
+            </div>
+            <button class="btn btn--primary" type="submit">Send message</button>
+            <p class="form-note" id="form-note" role="status"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year">2026</span> Maarouf Abdelfatah. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

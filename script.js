@@ -407,7 +407,7 @@
 
   if (form) {
     var note = $("#form-note");
-    var recipient = "abdelfatahOmaarouf@gmail.com"; // <-- your email address
+    var recipient = "abdelfatah0maarouf@gmail.com"; // <-- your email address
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();

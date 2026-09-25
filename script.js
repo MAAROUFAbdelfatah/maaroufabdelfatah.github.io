@@ -5,10 +5,11 @@
    1. Mobile navigation toggle (+ close on click/Escape/outside click)
    2. Smooth scrolling for anchor links (with sticky-header offset)
    3. Active-link highlighting while scrolling (IntersectionObserver)
-   4. Publications rendered from a JS data array (add new ones in JS only)
-   5. Fade-in-on-scroll for sections (IntersectionObserver)
-   6. Contact form -> mailto (no backend)
-   7. Auto-updating footer year
+   4. Featured Projects rendered from a JS data array
+   5. Research / Publications rendered from a JS data array
+   6. Fade-in-on-scroll for sections (IntersectionObserver)
+   7. Contact form -> mailto (no backend)
+   8. Auto-updating footer year
    ========================================================================== */
 
 (function () {
@@ -138,18 +139,151 @@
   }
 
   /* ----------------------------------------------------------------------
-     4. PUBLICATIONS (RENDERED FROM A DATA ARRAY)
-     The <ul> in the Publications section is filled from this array, so you
-     can add/edit papers purely in JS — no HTML or CSS changes needed.
-     Prepend new entries (newest first).
+     4. FEATURED PROJECTS (RENDERED FROM A DATA ARRAY)
+     The #projects-grid is filled from this array. Add/edit projects purely
+     in JS — no HTML or CSS changes needed. Newest/strongest first.
 
      Fields:
-       title    : paper title (linked externally)
-       authors  : full author list (comma separated)
-       venue    : journal / conference + volume / issue
-       date     : publication date (+ page range if you like)
-       link     : URL for the paper (opens in a new tab)
-       summary  : 1–2 sentence description of the contribution
+       title      : project name (linked to `link`)
+       role       : your role caption, e.g. "Research & development — co-author"
+       category   : short label drawn on the card media header
+       media      : gradient variant class: "ai" | "ml" | "dm"
+       tags       : category tags (Backend, Full Stack, AI / Machine Learning...)
+       description: 1–2 sentences
+       features   : key technical features (bullets)
+       stack      : main technologies (chips)
+       link       : primary external link (demo, paper, repo...)
+       linkLabel  : label for the primary link button
+       github     : repository URL, or null if you don't have one
+       demo       : live demo URL, or null if not available
+
+     NOTE: The starter entries below are derived from published papers
+     (no fabricated repo/demo links). Replace or extend them with your
+     commercial / personal projects.
+     ---------------------------------------------------------------------- */
+  var projects = [
+    {
+      title: "Arabic Sign Language Alphabet Recognition (ArSL2018)",
+      role: "Research & development — co-author",
+      category: "AI / Deep Learning",
+      media: "ai",
+      tags: ["AI / Machine Learning", "Computer Vision", "Research"],
+      description:
+        "Transfer-learning framework (InceptionV3) that classifies the 32 Arabic Sign Language alphabet classes on the ArSL2018 dataset (54,049 images), with ablation testing and per-class error analysis.",
+      features: [
+        "InceptionV3 transfer learning",
+        "Ablation experiments",
+        "Per-class error analysis",
+        "54,049-image ArSL2018 dataset"
+      ],
+      stack: ["Transfer Learning", "InceptionV3", "Convolutional Networks", "Image Classification"],
+      link: "https://thesai.org/Downloads/Volume17No6/Paper_57-Arabic_Sign_Language_Alphabet_Recognition.pdf",
+      linkLabel: "Paper (PDF)",
+      github: null,
+      demo: null
+    },
+    {
+      title: "English–Amazigh Machine Translation with Transformers",
+      role: "Research & development — co-author",
+      category: "AI / NLP",
+      media: "ml",
+      tags: ["AI / Machine Learning", "Natural Language Processing", "Research"],
+      description:
+        "Neural machine translation for the low-resource Amazigh–English language pair, comparing LSTM, GRU and Transformer architectures on a 137,322-sentence parallel corpus; the Transformer reached 91.37% accuracy.",
+      features: [
+        "LSTM / GRU / Transformer comparison",
+        "Low-resource parallel corpus (137,322 sentences)",
+        "Top accuracy: Transformer (91.37%)"
+      ],
+      stack: ["Transformers", "LSTM", "GRU", "Machine Translation"],
+      link: "https://doi.org/10.11591/ijeecs.v34.i3",
+      linkLabel: "Paper (DOI)",
+      github: null,
+      demo: null
+    },
+    {
+      title: "Association-Rule Mining on a Diabetic Dataset",
+      role: "Research & development — co-author",
+      category: "Data Mining",
+      media: "dm",
+      tags: ["Data Mining", "Research"],
+      description:
+        "Evaluation of FP-Growth and its variants (CFP-Growth, ICFP-Growth) for association-rule mining on a diabetic dataset; ICFP-Growth proved the most accurate.",
+      features: [
+        "FP-Growth and its variants",
+        "Association-rule mining",
+        "Best accuracy: ICFP-Growth"
+      ],
+      stack: ["FP-Growth", "CFP-Growth", "ICFP-Growth", "Association Rules"],
+      link: "https://doi.org/10.1007/978-3-031-06458-6_12",
+      linkLabel: "Paper (DOI)",
+      github: null,
+      demo: null
+    }
+  ];
+
+  var projectsGrid = $("#projects-grid");
+  if (projectsGrid && projects.length) {
+    projectsGrid.innerHTML = projects
+      .map(function (p) {
+        // Optional secondary links (GitHub / demo) — only rendered when set.
+        var extraLinks = "";
+        if (p.github) {
+          extraLinks +=
+            '<a class="btn btn--outline btn--sm" href="' +
+            p.github +
+            '" target="_blank" rel="noopener">GitHub</a>';
+        }
+        if (p.demo) {
+          extraLinks +=
+            '<a class="btn btn--outline btn--sm" href="' +
+            p.demo +
+            '" target="_blank" rel="noopener">Live demo</a>';
+        }
+
+        return (
+          '<article class="project-card reveal">' +
+            '<div class="project-card__media project-card__media--' + p.media + '">' +
+              '<span class="project-card__cat">' + p.category + "</span>" +
+            "</div>" +
+            '<div class="project-card__body">' +
+              "<h3 class=\"project-card__title\">" +
+                '<a href="' + p.link + '" target="_blank" rel="noopener">' + p.title + "</a>" +
+              "</h3>" +
+              '<p class="project-card__role">' + p.role + "</p>" +
+              '<p class="project-card__desc">' + p.description + "</p>" +
+              '<ul class="project-card__features">' +
+                p.features.map(function (f) { return "<li>" + f + "</li>"; }).join("") +
+              "</ul>" +
+              '<ul class="tags" aria-label="Project technologies">' +
+                p.stack.map(function (t) { return "<li>" + t + "</li>"; }).join("") +
+              "</ul>" +
+              '<div class="project-card__links">' +
+                '<a class="btn btn--primary btn--sm" href="' + p.link + '" target="_blank" rel="noopener">' + p.linkLabel + "</a>" +
+                extraLinks +
+              "</div>" +
+            "</div>" +
+          "</article>"
+        );
+      })
+      .join("");
+  }
+
+  /* ----------------------------------------------------------------------
+     5. RESEARCH / PUBLICATIONS (RENDERED FROM A DATA ARRAY)
+     The #research-publications-list is filled from this array. Add/edit
+     entries purely in JS.
+
+     Fields:
+       title     : paper title (linked to `link`)
+       authors   : full author list
+       venue     : journal / conference + volume / issue
+       year      : publication year
+       status    : e.g. "Published" — placeholder only if unknown
+       topics    : research topics / paper keywords (chips)
+       summary   : 1–2 sentence description of the contribution
+       link      : URL (DOI or PDF)
+       featured  : true gives the AI / sign-language paper a highlighted card
      ---------------------------------------------------------------------- */
   var publications = [
     {
@@ -157,48 +291,73 @@
         "Arabic Sign Language Alphabet Recognition Using Transfer Learning: Evaluation, Ablation, and Deployment",
       authors:
         "Abdelfatah Maarouf, Otman Maarouf, Abdelaali Benaiss, Rachid El Ayachi, Mohamed Biniz",
-      venue:
-        "International Journal of Advanced Computer Science and Applications (IJACSA), Vol. 17, No. 6",
-      date: "2026",
-      link:
-        "https://thesai.org/Downloads/Volume17No6/Paper_57-Arabic_Sign_Language_Alphabet_Recognition.pdf",
+      venue: "International Journal of Advanced Computer Science and Applications (IJACSA), Vol. 17, No. 6",
+      year: "2026",
+      status: "Published",
+      topics: ["Arabic Sign Language Recognition", "Computer Vision", "Deep Learning", "Transfer Learning"],
       summary:
-        "Transfer learning (InceptionV3) approach for classifying Arabic Sign Language alphabets on the ArSL2018 dataset (54,049 images), with ablation testing and per-class error analysis."
+        "A transfer-learning (InceptionV3) framework for classifying Arabic Sign Language alphabets on the ArSL2018 dataset (54,049 images), evaluated through ablation testing and per-class error analysis.",
+      link: "https://thesai.org/Downloads/Volume17No6/Paper_57-Arabic_Sign_Language_Alphabet_Recognition.pdf",
+      featured: true
     },
     {
       title: "Automatic Translation from English to Amazigh Using Transformer Learning",
       authors: "Otman Maarouf, Abdelfatah Maarouf, Rachid El Ayachi, Mohamed Biniz",
-      venue:
-        "Indonesian Journal of Electrical Engineering and Computer Science (IJEECS), Vol. 34, No. 3",
-      date: "June 2024, pp. 1924\u20131934",
-      link: "https://doi.org/10.11591/ijeecs.v34.i3",
+      venue: "Indonesian Journal of Electrical Engineering and Computer Science (IJEECS), Vol. 34, No. 3",
+      year: "2024",
+      status: "Published",
+      topics: ["Machine Translation", "Natural Language Processing", "Deep Learning"],
       summary:
-        "Neural machine translation models (LSTM, GRU, Transformer) for the low-resource Amazigh\u2013English pair, trained on a 137,322-sentence parallel corpus; the Transformer achieved the highest accuracy (91.37%)."
+        "Neural machine translation models (LSTM, GRU, Transformer) for the low-resource Amazigh–English language pair, trained on a 137,322-sentence parallel corpus; the Transformer achieved the highest accuracy (91.37%).",
+      link: "https://doi.org/10.11591/ijeecs.v34.i3"
     },
     {
       title: "Mining Frequents Itemset and Association Rules in Diabetic Dataset",
       authors: "Youssef Fakir, Abdelfatah Maarouf, Rachid El Ayachi",
-      venue: "Business Intelligence, CBI 2022 \u2014 Springer, LNBIP vol. 449",
-      date: "May 2022, pp. 146\u2013157",
-      link: "https://doi.org/10.1007/978-3-031-06458-6_12",
+      venue: "Business Intelligence, CBI 2022 — Springer, LNBIP vol. 449",
+      year: "2022",
+      status: "Published",
+      topics: ["Data Mining", "Association Rules"],
       summary:
-        "FP-Growth and its variants (CFP-Growth, ICFP-Growth) applied to a diabetic dataset for association rule mining; ICFP-Growth was found to be the most accurate."
+        "FP-Growth and its variants (CFP-Growth, ICFP-Growth) applied to a diabetic dataset for association-rule mining; ICFP-Growth was found to be the most accurate.",
+      link: "https://doi.org/10.1007/978-3-031-06458-6_12"
     }
   ];
 
-  var pubList = $("#publications-list");
+  var pubList = $("#research-publications-list");
   if (pubList && publications.length) {
     pubList.innerHTML = publications
       .map(function (pub) {
+        var topics = pub.topics
+          ? '<ul class="tags tags--accent pub-card__topics" aria-label="Research topics">' +
+              pub.topics.map(function (t) { return "<li>" + t + "</li>"; }).join("") +
+            "</ul>"
+          : "";
+
+        var statusBadge =
+          '<span class="badge badge--' +
+          (pub.status === "Published" ? "published" : "featured") +
+          '">' +
+          pub.status +
+          "</span>";
+
         return (
           '<li class="pub-item reveal">' +
-            '<article class="pub-card">' +
-              '<h3 class="pub-card__title">' +
+            '<article class="pub-card' + (pub.featured ? " pub-card--featured" : "") + '">' +
+              '<div class="pub-card__head">' +
+                statusBadge +
+                '<time class="pub-card__year">' + pub.year + "</time>" +
+              "</div>" +
+              "<h3 class=\"pub-card__title\">" +
                 '<a href="' + pub.link + '" target="_blank" rel="noopener">' + pub.title + "</a>" +
               "</h3>" +
               '<p class="pub-card__authors">' + pub.authors + "</p>" +
-              '<p class="pub-card__meta">' + pub.venue + " &middot; " + pub.date + "</p>" +
+              '<p class="pub-card__venue">' + pub.venue + "</p>" +
+              topics +
               '<p class="pub-card__summary">' + pub.summary + "</p>" +
+              '<a class="pub-card__link" href="' + pub.link + '" target="_blank" rel="noopener">' +
+                "Read paper" +
+              "</a>" +
             "</article>" +
           "</li>"
         );
@@ -207,11 +366,11 @@
   }
 
   /* ----------------------------------------------------------------------
-     5. FADE-IN-ON-SCROLL
+     6. FADE-IN-ON-SCROLL
      Elements with the `.reveal` class animate in the first time they enter
      the viewport. Once visible they are un-observed (single animation).
-     Note: this block runs AFTER the publications renderer above so that
-     newly created `.reveal` cards are observed too.
+     Note: this block runs AFTER the renderers above so that newly created
+     `.reveal` cards (projects + publications) are observed too.
      ---------------------------------------------------------------------- */
   var revealItems = document.querySelectorAll(".reveal");
 
@@ -239,9 +398,10 @@
   }
 
   /* ----------------------------------------------------------------------
-     6. CONTACT FORM -> MAILTO
-     No backend: on submit we validate the fields and open the visitor's
-     email application with a pre-filled message addressed to you.
+     7. CONTACT FORM -> MAILTO
+     No backend on GitHub Pages: on submit we validate the fields and open
+     the visitor's email application with a pre-filled message addressed to
+     you. The form genuinely works (it never silently drops a message).
      ---------------------------------------------------------------------- */
   var form = $("#contact-form");
 
@@ -283,7 +443,7 @@
   }
 
   /* ----------------------------------------------------------------------
-     7. FOOTER YEAR
+     8. FOOTER YEAR
      Keeps the copyright year current without manual edits.
      ---------------------------------------------------------------------- */
   var yearEl = $("#year");

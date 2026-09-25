@@ -3,33 +3,88 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Portfolio of Maarouf Abdelfatah — Full-Stack Developer specializing in Java and Spring Boot back-end engineering." />
-  <title>Maarouf Abdelfatah — Full-Stack Developer</title>
 
-  <!-- Google Fonts: Sora (headings) + Inter (body) -->
+  <!-- ============================================================
+       SEO / SOCIAL METADATA
+       ============================================================ -->
+  <title>Maarouf Abdelfatah | Java &amp; Spring Boot Backend Engineer</title>
+  <meta name="description" content="Portfolio of Maarouf Abdelfatah — Java & Spring Boot backend engineer with full-stack experience (Angular, Thymeleaf) and AI/ML research in sign-language recognition and machine translation." />
+  <meta name="author" content="Maarouf Abdelfatah" />
+  <link rel="canonical" href="https://maaroufabdelfatah.github.io/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://maaroufabdelfatah.github.io/" />
+  <meta property="og:title" content="Maarouf Abdelfatah | Java & Spring Boot Backend Engineer" />
+  <meta property="og:description" content="Java & Spring Boot backend engineer with full-stack experience (Angular, Thymeleaf) and AI/ML research in sign-language recognition and machine translation." />
+  <meta property="og:site_name" content="Maarouf Abdelfatah — Portfolio" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Maarouf Abdelfatah | Java & Spring Boot Backend Engineer" />
+  <meta name="twitter:description" content="Java & Spring Boot backend engineer with full-stack experience and AI/ML research." />
+
+  <meta name="theme-color" content="#0f2b45" />
+
+  <!-- Favicon (inline SVG file, GitHub Pages safe) -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <!-- Google Fonts: Sora (headings) + Inter (body), swap avoids render-blocking text -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
+
+  <!-- ============================================================
+       STRUCTURED DATA (JSON-LD) — Person schema, factual only.
+       Update URLs here when your real LinkedIn / GitHub profiles change.
+       ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Maarouf Abdelfatah",
+    "url": "https://maaroufabdelfatah.github.io/",
+    "email": "mailto:abdelfatahOmaarouf@gmail.com",
+    "telephone": "+212647113789",
+    "jobTitle": "Java / Spring Boot Backend Engineer",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Fes",
+      "addressCountry": "MA"
+    },
+    "sameAs": ["https://github.com/MAAROUFAbdelfatah"],
+    "worksFor": { "@type": "Organization", "name": "CGI" },
+    "knowsAbout": [
+      "Java",
+      "Spring Boot",
+      "REST APIs",
+      "Databases",
+      "Angular",
+      "DevOps",
+      "Machine Learning",
+      "Deep Learning"
+    ]
+  }
+  </script>
 </head>
 <body>
 
   <!-- ============================================================
-       SKIP LINK  (accessibility: lets keyboard users jump to content)
+       SKIP LINK (accessibility: lets keyboard users jump to content)
        ============================================================ -->
   <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- ============================================================
        HEADER / NAVIGATION
        Sticky nav with a hamburger toggle on small screens.
+       Links must match the section ids below.
        ============================================================ -->
   <header class="site-header" id="site-header">
     <nav class="nav container" aria-label="Primary">
-      <!-- Brand (initials) -->
       <a class="nav__brand" href="#home">MA<span class="nav__brand-dot">.</span></a>
 
-      <!-- Hamburger toggle (visible on mobile only) -->
       <button
         class="nav__toggle"
         id="nav-toggle"
@@ -38,27 +93,25 @@
         aria-controls="primary-menu"
         aria-label="Toggle navigation menu"
       >
-        <!-- hamburger icon -->
         <svg class="icon icon--menu-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
           <line x1="3" y1="6" x2="21" y2="6" />
           <line x1="3" y1="12" x2="21" y2="12" />
           <line x1="3" y1="18" x2="13" y2="18" />
         </svg>
-        <!-- close icon -->
         <svg class="icon icon--menu-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
           <line x1="6" y1="6" x2="18" y2="18" />
           <line x1="6" y1="18" x2="18" y2="6" />
         </svg>
       </button>
 
-      <!-- Nav links (JS toggles the .is-open class on mobile) -->
       <ul class="nav__list" id="primary-menu">
         <li><a class="nav__link" href="#home">Home</a></li>
         <li><a class="nav__link" href="#about">About</a></li>
+        <li><a class="nav__link" href="#projects">Projects</a></li>
         <li><a class="nav__link" href="#experience">Experience</a></li>
-        <li><a class="nav__link" href="#education">Education</a></li>
-        <li><a class="nav__link" href="#publications">Publications</a></li>
+        <li><a class="nav__link" href="#research">Research</a></li>
         <li><a class="nav__link" href="#skills">Skills</a></li>
+        <li><a class="nav__link" href="#education">Education</a></li>
         <li><a class="nav__link" href="#contact">Contact</a></li>
       </ul>
     </nav>
@@ -67,22 +120,77 @@
   <main id="main">
 
     <!-- ============================================================
-         SECTION 1: HERO
+         SECTION 1: HERO (Home)
          ============================================================ -->
     <section class="hero" id="home" aria-label="Introduction">
       <div class="container hero__inner">
-        <p class="hero__eyebrow">Full-Stack Developer</p>
-        <h1 class="hero__title">Maarouf&nbsp;Abdelfatah</h1>
-        <p class="hero__tagline">Java / Spring Boot back-end specialist with hands-on front-end experience.</p>
-        <p class="hero__intro">
-          I design and maintain reliable back-end systems in Java and Spring Boot, and I bring them to
-          life with front-end technologies like Angular and Thymeleaf — always following solid engineering
-          practices and Agile delivery.
-        </p>
-        <div class="hero__actions">
-          <!-- CV sits in the project root next to index.html; swap the href when you update it -->
-          <a class="btn btn--primary" href="MAAROUF_ABDELFATAH.pdf" download>Download CV</a>
-          <a class="btn btn--ghost" href="#contact">Contact me</a>
+        <div class="hero__copy">
+          <p class="hero__eyebrow">Java / Spring Boot Backend Engineer</p>
+          <h1 class="hero__title">Maarouf&nbsp;Abdelfatah</h1>
+          <p class="hero__lede">
+            Building reliable backend systems with Java and Spring Boot, with full-stack
+            experience in Angular and Thymeleaf and research experience in AI/ML.
+          </p>
+
+          <!-- Core stack chips: lets recruiters grasp the stack in seconds -->
+          <ul class="tech-chips" aria-label="Core technologies">
+            <li>Java</li><li>Spring Boot</li><li>REST APIs</li><li>SQL</li>
+            <li>Angular</li><li>Testing</li><li>DevOps</li><li>AI/ML</li>
+          </ul>
+
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#projects">View Projects</a>
+            <a class="btn btn--ghost" href="#experience">View Experience</a>
+            <!-- CV lives in the project root next to index.html; swap the href
+                 when you publish a new CV file. -->
+            <a class="btn btn--ghost" href="MAAROUF_ABDELFATAH.pdf" download aria-label="Download CV (PDF)">Download CV</a>
+            <a class="btn btn--ghost" href="#contact">Contact Me</a>
+          </div>
+
+          <!-- Social links -->
+          <div class="hero__socials">
+            <!-- Replace the LinkedIn href with your real profile URL -->
+            <a class="social-link" href="https://github.com/MAAROUFAbdelfatah" target="_blank" rel="noopener" aria-label="GitHub profile">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55v-2.15c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.35.96.1-.75.4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.69 5.39-5.25 5.67.41.35.77 1.05.77 2.12v3.14c0 .3.2.67.8.55A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/>
+              </svg>
+            </a>
+            <a class="social-link" href="#" aria-label="LinkedIn profile (add your URL)">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45z"/>
+              </svg>
+            </a>
+            <a class="social-link" href="mailto:abdelfatahOmaarouf@gmail.com" aria-label="Send email">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Subtle developer visual: decorative "terminal" card (CSS only).
+             aria-hidden — purely decorative. -->
+        <div class="hero__terminal" aria-hidden="true">
+          <div class="terminal">
+            <div class="terminal__bar">
+              <span class="terminal__dot"></span>
+              <span class="terminal__dot"></span>
+              <span class="terminal__dot"></span>
+              <span class="terminal__file">PortfolioService.java</span>
+            </div>
+            <pre class="terminal__body"><code><span class="tok-kw">@RestController</span>
+<span class="tok-kw">@RequestMapping</span>(<span class="tok-str">"/api"</span>)
+<span class="tok-kw">public class</span> <span class="tok-cl">PortfolioService</span> {
+
+  <span class="tok-kw">@GetMapping</span>(<span class="tok-str">"/profile"</span>)
+  <span class="tok-kw">public</span> Profile <span class="tok-fn">getProfile</span>() {
+    <span class="tok-kw">return</span> <span class="tok-kw">new</span> <span class="tok-cl">Profile</span>(
+      <span class="tok-str">"Java / Spring Boot Backend Engineer"</span>,
+      <span class="tok-str">"Full-Stack · AI/ML Research"</span>
+    );
+  }
+}</code></pre>
+          </div>
         </div>
       </div>
     </section>
@@ -93,234 +201,316 @@
     <section class="section" id="about" aria-labelledby="about-title">
       <div class="container container--narrow">
         <p class="section__eyebrow">About</p>
-        <h2 class="section__title" id="about-title">A pragmatic engineer focused on the back end</h2>
-        <div class="prose reveal">
-          <p>
-            I am a full-stack developer with a strong specialization in back-end development using
-            <strong>Java and Spring Boot</strong>, and experience with front-end technologies such as
-            <strong>Thymeleaf and Angular</strong>. I also bring DevOps skills and Agile methodologies to the table.
-          </p>
-          <p>
-            I have solid foundations in algorithms and data structures, with expertise in
-            Object-Oriented Programming (OOP) and Aspect-Oriented Programming (AOP). I am a fast,
-            self-driven and ambitious learner, passionate about new challenges and continuous growth.
-          </p>
+        <h2 class="section__title" id="about-title">Backend engineer with a full-stack and research edge</h2>
+
+        <div class="about-layout">
+          <div class="prose reveal">
+            <p>
+              I am a backend engineer working primarily with <strong>Java and Spring Boot</strong>, building
+              and maintaining the services that applications depend on — REST APIs, database integration,
+              and application logic backed by solid testing.
+            </p>
+            <p>
+              My full-stack experience spans <strong>Angular and Thymeleaf</strong> frontends, and I work
+              within <strong>Agile</strong> and <strong>DevOps</strong> delivery flows (Scrum, Jira, Jenkins,
+              GitLab). I have strong foundations in algorithms, data structures,
+              <strong>Object-Oriented Programming (OOP)</strong>, and <strong>Aspect-Oriented Programming (AOP)</strong>.
+            </p>
+            <p>
+              Alongside engineering, I conduct research in <strong>machine learning and deep learning</strong> —
+              including sign-language recognition and machine translation — with three published papers in
+              peer-reviewed venues.
+            </p>
+          </div>
+
+          <!-- Focus areas: what defines the profile at a glance -->
+          <div class="about-focus">
+            <div class="focus-card reveal">
+              <h3 class="focus-card__title">Backend engineering</h3>
+              <p class="focus-card__text">Java, Spring Boot, Spring ecosystem, REST APIs, databases, testing.</p>
+            </div>
+            <div class="focus-card reveal">
+              <h3 class="focus-card__title">Full-stack delivery</h3>
+              <p class="focus-card__text">Angular and Thymeleaf frontends shipped alongside backend services.</p>
+            </div>
+            <div class="focus-card reveal">
+              <h3 class="focus-card__title">Agile &amp; DevOps</h3>
+              <p class="focus-card__text">Scrum ceremonies, Jira, CI with Jenkins, Git/GitLab workflows.</p>
+            </div>
+            <div class="focus-card reveal">
+              <h3 class="focus-card__title">AI / ML research</h3>
+              <p class="focus-card__text">Deep learning applied to sign language and low-resource language tasks.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- ============================================================
-         SECTION 3: EXPERIENCE  (reverse-chronological)
+         SECTION 3: FEATURED PROJECTS
+         Cards are rendered from the `projects` array in script.js.
+         Current entries are derived from published research; add
+         commercial / personal projects in JS only.
          ============================================================ -->
-    <section class="section section--alt" id="experience" aria-labelledby="experience-title">
-      <div class="container container--narrow">
-        <p class="section__eyebrow">Experience</p>
-        <h2 class="section__title" id="experience-title">Where I've worked</h2>
+    <section class="section section--alt" id="projects" aria-labelledby="projects-title">
+      <div class="container">
+        <p class="section__eyebrow">Featured Projects</p>
+        <h2 class="section__title" id="projects-title">Things I've built</h2>
 
-        <!-- Experience 1 -->
-        <article class="job reveal">
-          <header class="job__head">
-            <div>
-              <h3 class="job__role">Java Software Engineer</h3>
-              <p class="job__company">CGI &middot; Rabat, Morocco <span class="job__sector">(Insurance)</span></p>
-            </div>
-            <p class="job__dates">Sep 2023 &ndash; Present</p>
-          </header>
-          <ul class="job__points">
-            <li>Design, implement and maintain monolithic applications using Java and Spring Boot.</li>
-            <li>Manage Oracle databases and ensure smooth communication between the database layer and back-end services.</li>
-            <li>Write unit tests with JUnit and run functional tests to guarantee software reliability.</li>
-            <li>Participate in Agile ceremonies — daily stand-ups and sprint planning — contributing to efficient project delivery.</li>
-            <li>Use Jira for task tracking, sprint planning and team collaboration, ensuring transparency and good organization of development activities.</li>
-          </ul>
-          <ul class="tags" aria-label="Technologies used at CGI">
-            <li>Spring</li><li>Thymeleaf</li><li>Struts</li><li>REST API</li><li>JUnit</li>
-            <li>Oracle</li><li>Liquibase</li><li>Jenkins</li><li>Postman</li><li>Jira</li>
-          </ul>
-        </article>
-
-        <!-- Experience 2 -->
-        <article class="job reveal">
-          <header class="job__head">
-            <div>
-              <h3 class="job__role">Java Software Engineer</h3>
-              <p class="job__company">RTA Agence &middot; Agadir, Morocco <span class="job__sector">(Hospitality)</span></p>
-            </div>
-            <p class="job__dates">Feb 2023 &ndash; Sep 2023</p>
-          </header>
-          <ul class="job__points">
-            <li>Implemented monolithic applications, including bug fixes and feature improvements according to business needs.</li>
-            <li>Owned front-end development with Angular and resolved client-reported issues through effective debugging.</li>
-            <li>Applied industry best practices — SOLID principles, TDD and common design patterns.</li>
-            <li>Participated in daily stand-ups and client meetings to track progress, unblock issues and keep stakeholders aligned.</li>
-          </ul>
-          <ul class="tags" aria-label="Technologies used at RTA Agence">
-            <li>Spring Boot</li><li>Spring Security</li><li>Hibernate</li><li>PostgreSQL</li>
-            <li>REST API</li><li>Angular</li><li>Git</li><li>GitLab</li>
-          </ul>
-        </article>
-
-        <!-- Experience 3 -->
-        <article class="job reveal">
-          <header class="job__head">
-            <div>
-              <h3 class="job__role">Java Software Engineer</h3>
-              <p class="job__company">Fractalite &middot; Casablanca, Morocco <span class="job__sector">(Hospitality)</span></p>
-            </div>
-            <p class="job__dates">Sep 2022 &ndash; Feb 2023</p>
-          </header>
-          <ul class="job__points">
-            <li>Developed and maintained monolithic applications, fixing anomalies and continuously optimizing features.</li>
-            <li>Contributed to the Angular front-end, analyzing and efficiently resolving incidents reported by clients.</li>
-            <li>Implemented recognized development best practices and design patterns.</li>
-            <li>Took part in daily stand-ups and client meetings to track progress, resolve blockers and align stakeholders.</li>
-          </ul>
-          <ul class="tags" aria-label="Technologies used at Fractalite">
-            <li>Spring Boot</li><li>Hibernate</li><li>PostgreSQL</li><li>REST API</li><li>Angular</li><li>Git</li><li>GitLab</li>
-          </ul>
-        </article>
+        <!-- Populated by script.js -->
+        <div class="project-grid" id="projects-grid"></div>
       </div>
     </section>
 
     <!-- ============================================================
-         SECTION 4: EDUCATION
+         SECTION 4: EXPERIENCE  (vertical timeline, newest first)
          ============================================================ -->
-    <section class="section" id="education" aria-labelledby="education-title">
+    <section class="section" id="experience" aria-labelledby="experience-title">
+      <div class="container container--narrow">
+        <p class="section__eyebrow">Experience</p>
+        <h2 class="section__title" id="experience-title">Professional experience</h2>
+
+        <div class="timeline">
+          <!-- Experience 1 -->
+          <article class="timeline__item reveal">
+            <div class="timeline__dot" aria-hidden="true"></div>
+            <div class="job">
+              <header class="job__head">
+                <div>
+                  <h3 class="job__role">Java Software Engineer</h3>
+                  <p class="job__company">CGI &middot; Rabat, Morocco <span class="job__sector">(Insurance)</span></p>
+                </div>
+                <p class="job__dates">Sep 2023 &ndash; Present</p>
+              </header>
+              <p class="job__context">
+                Design, implementation and maintenance of monolithic applications in the insurance sector.
+              </p>
+              <ul class="job__points">
+                <li>Implement and maintain applications with Java and Spring Boot, managing Oracle databases and ensuring smooth database&ndash;service communication.</li>
+                <li>Write unit tests with JUnit and run functional tests to guarantee software reliability.</li>
+                <li>Contribute to Agile ceremonies — daily stand-ups and sprint planning — for efficient project delivery.</li>
+                <li>Track tasks, plan sprints and synchronize the team through Jira, keeping activity transparent and organized.</li>
+              </ul>
+              <ul class="tags" aria-label="Technologies used at CGI">
+                <li>Spring</li><li>Thymeleaf</li><li>Struts</li><li>REST API</li><li>JUnit</li>
+                <li>Oracle</li><li>Liquibase</li><li>Jenkins</li><li>Postman</li><li>Jira</li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- Experience 2 -->
+          <article class="timeline__item reveal">
+            <div class="timeline__dot" aria-hidden="true"></div>
+            <div class="job">
+              <header class="job__head">
+                <div>
+                  <h3 class="job__role">Java Software Engineer</h3>
+                  <p class="job__company">RTA Agence &middot; Agadir, Morocco <span class="job__sector">(Hospitality)</span></p>
+                </div>
+                <p class="job__dates">Feb 2023 &ndash; Sep 2023</p>
+              </header>
+              <p class="job__context">
+                Backend development and front-end support for hospitality applications.
+              </p>
+              <ul class="job__points">
+                <li>Implemented monolithic applications, fixing bugs and improving features to match business needs.</li>
+                <li>Owned Angular front-end development and resolved client-reported issues through effective debugging.</li>
+                <li>Applied SOLID principles, TDD and common design patterns.</li>
+                <li>Joined daily stand-ups and client meetings to track progress, unblock issues and keep alignment.</li>
+              </ul>
+              <ul class="tags" aria-label="Technologies used at RTA Agence">
+                <li>Spring Boot</li><li>Spring Security</li><li>Hibernate</li><li>PostgreSQL</li>
+                <li>REST API</li><li>Angular</li><li>Git</li><li>GitLab</li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- Experience 3 -->
+          <article class="timeline__item reveal">
+            <div class="timeline__dot" aria-hidden="true"></div>
+            <div class="job">
+              <header class="job__head">
+                <div>
+                  <h3 class="job__role">Java Software Engineer</h3>
+                  <p class="job__company">Fractalite &middot; Casablanca, Morocco <span class="job__sector">(Hospitality)</span></p>
+                </div>
+                <p class="job__dates">Sep 2022 &ndash; Feb 2023</p>
+              </header>
+              <p class="job__context">
+                Development and maintenance of monolithic applications in the hospitality sector.
+              </p>
+              <ul class="job__points">
+                <li>Developed and maintained applications, fixing anomalies and continuously optimizing features.</li>
+                <li>Contributed to the Angular front-end, efficiently resolving incidents reported by clients.</li>
+                <li>Implemented recognized development best practices and design patterns.</li>
+                <li>Participated in daily stand-ups and client meetings to track progress and resolve blockers.</li>
+              </ul>
+              <ul class="tags" aria-label="Technologies used at Fractalite">
+                <li>Spring Boot</li><li>Hibernate</li><li>PostgreSQL</li><li>REST API</li><li>Angular</li><li>Git</li><li>GitLab</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 5: RESEARCH & PUBLICATIONS
+         Cards are rendered from the `publications` array in script.js.
+         Focus areas below are derived from the actual published papers.
+         ============================================================ -->
+    <section class="section section--alt" id="research" aria-labelledby="research-title">
+      <div class="container container--narrow">
+        <p class="section__eyebrow">Research</p>
+        <h2 class="section__title" id="research-title">Research &amp; publications</h2>
+
+        <!-- Research focus panel — topics covered by the published work -->
+        <div class="research-focus reveal">
+          <p class="research-focus__title">Research focus areas</p>
+          <ul class="tags tags--accent" aria-label="Research focus areas">
+            <li>Arabic Sign Language Recognition</li>
+            <li>Computer Vision</li>
+            <li>Deep Learning</li>
+            <li>Transfer Learning</li>
+            <li>Machine Translation</li>
+            <li>Natural Language Processing</li>
+            <li>Data Mining</li>
+          </ul>
+        </div>
+
+        <p class="prose prose--note reveal">
+          Publications in peer-reviewed journals and conferences. Full records are listed below
+          with links to the publisher.
+        </p>
+
+        <!-- Populated by script.js -->
+        <ul class="pub-list" id="research-publications-list"></ul>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 6: SKILLS
+         "Backend" is the featured/core group — larger and emphasized.
+         ============================================================ -->
+    <section class="section" id="skills" aria-labelledby="skills-title">
+      <div class="container">
+        <p class="section__eyebrow">Skills</p>
+        <h2 class="section__title" id="skills-title">Technical skills</h2>
+
+        <div class="skill-cats">
+
+          <!-- Core specialization — visually emphasized -->
+          <div class="skill-cat skill-cat--core reveal">
+            <div class="skill-cat__head">
+              <h3 class="skill-cat__title">Backend</h3>
+              <span class="skill-cat__badge">Core specialization</span>
+            </div>
+            <ul class="tags">
+              <li>Java</li><li>Spring Boot</li><li>Spring MVC</li><li>Spring Data</li>
+              <li>Spring Security</li><li>Hibernate / JPA</li><li>REST</li><li>SOAP</li>
+              <li>Microservices</li><li>Monolithic Architecture</li>
+            </ul>
+          </div>
+
+          <div class="skill-cat reveal">
+            <h3 class="skill-cat__title">Frontend</h3>
+            <ul class="tags">
+              <li>Angular</li><li>Thymeleaf</li><li>HTML</li><li>CSS</li>
+            </ul>
+          </div>
+
+          <div class="skill-cat reveal">
+            <h3 class="skill-cat__title">Databases</h3>
+            <ul class="tags">
+              <li>Oracle</li><li>PostgreSQL</li><li>MySQL</li><li>SQL Server</li><li>SQL</li><li>Liquibase</li>
+            </ul>
+          </div>
+
+          <div class="skill-cat reveal">
+            <h3 class="skill-cat__title">Testing &amp; Engineering</h3>
+            <ul class="tags">
+              <li>JUnit</li><li>Mockito</li><li>Unit / Integration / Functional Testing</li>
+              <li>TDD</li><li>Clean Code</li><li>OOP</li><li>AOP</li><li>Design Patterns</li>
+            </ul>
+          </div>
+
+          <div class="skill-cat reveal">
+            <h3 class="skill-cat__title">DevOps &amp; Tools</h3>
+            <ul class="tags">
+              <li>Git</li><li>GitLab</li><li>Maven</li><li>Jenkins</li><li>Jira</li>
+              <li>Postman</li><li>SonarLint</li><li>Agile</li><li>Scrum</li><li>DevOps</li>
+            </ul>
+          </div>
+
+          <div class="skill-cat reveal">
+            <h3 class="skill-cat__title">AI / ML</h3>
+            <ul class="tags">
+              <li>Machine Learning</li><li>Deep Learning</li><li>Computer Vision</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 7: EDUCATION  (compact, secondary to experience)
+         ============================================================ -->
+    <section class="section section--alt" id="education" aria-labelledby="education-title">
       <div class="container container--narrow">
         <p class="section__eyebrow">Education</p>
         <h2 class="section__title" id="education-title">Academic background</h2>
 
-        <div class="edu-grid">
-          <!-- Education 1 -->
-          <article class="edu-card reveal">
-            <h3 class="edu-card__title">Computer Science</h3>
-            <p class="edu-card__school">1337 &mdash; Future Is Loading, Khouribga, Morocco</p>
-            <p class="edu-card__dates">2021 &ndash; 2023</p>
+        <div class="edu-list">
+          <article class="edu-row reveal">
+            <div class="edu-row__dates">2021 &ndash; 2023</div>
+            <div class="edu-row__body">
+              <h3 class="edu-row__degree">Computer Science</h3>
+              <p class="edu-row__school">1337 &mdash; Future Is Loading, Khouribga, Morocco</p>
+            </div>
           </article>
 
-          <!-- Education 2 -->
-          <article class="edu-card reveal">
-            <h3 class="edu-card__title">Master in Business Intelligence</h3>
-            <p class="edu-card__school">Faculty of Science and Technology, Beni Mellal, Morocco</p>
-            <p class="edu-card__dates">2020 &ndash; 2022</p>
+          <article class="edu-row reveal">
+            <div class="edu-row__dates">2020 &ndash; 2022</div>
+            <div class="edu-row__body">
+              <h3 class="edu-row__degree">Master in Business Intelligence</h3>
+              <p class="edu-row__school">Faculty of Science and Technology, Beni Mellal, Morocco</p>
+            </div>
           </article>
 
-          <!-- Education 3 -->
-          <article class="edu-card reveal">
-            <h3 class="edu-card__title">Bachelor's Degree in Computer Science</h3>
-            <p class="edu-card__school">Faculty of Science and Technology, Beni Mellal, Morocco</p>
-            <p class="edu-card__dates">2019 &ndash; 2020</p>
+          <article class="edu-row reveal">
+            <div class="edu-row__dates">2019 &ndash; 2020</div>
+            <div class="edu-row__body">
+              <h3 class="edu-row__degree">Bachelor's Degree in Computer Science</h3>
+              <p class="edu-row__school">Faculty of Science and Technology, Beni Mellal, Morocco</p>
+            </div>
           </article>
 
-          <!-- Education 4 -->
-          <article class="edu-card reveal">
-            <h3 class="edu-card__title">DEUST &mdash; Mathematics, Computer Science, Physics &amp; Chemistry</h3>
-            <p class="edu-card__school">Faculty of Science and Technology, Beni Mellal, Morocco</p>
-            <p class="edu-card__dates">2017 &ndash; 2019</p>
+          <article class="edu-row reveal">
+            <div class="edu-row__dates">2017 &ndash; 2019</div>
+            <div class="edu-row__body">
+              <h3 class="edu-row__degree">DEUST &mdash; Mathematics, Computer Science, Physics &amp; Chemistry</h3>
+              <p class="edu-row__school">Faculty of Science and Technology, Beni Mellal, Morocco</p>
+            </div>
           </article>
         </div>
       </div>
     </section>
 
     <!-- ============================================================
-         SECTION 5: PUBLICATIONS
-         Cards are rendered from the `publications` array in script.js —
-         add or edit entries there, no HTML changes needed.
+         SECTION 8: CONTACT
+         The form is mailto-based: submitting opens the visitor's email
+         app with a pre-filled message addressed to you. No backend runs
+         on GitHub Pages, so this keeps the form genuinely functional.
          ============================================================ -->
-    <section class="section section--alt" id="publications" aria-labelledby="publications-title">
-      <div class="container container--narrow">
-        <p class="section__eyebrow">Publications</p>
-        <h2 class="section__title" id="publications-title">Papers &amp; articles</h2>
-
-        <!-- Populated by script.js -->
-        <ul class="pub-list" id="publications-list"></ul>
-      </div>
-    </section>
-
-    <!-- ============================================================
-         SECTION 6: SKILLS  (grouped tags — no progress bars)
-         ============================================================ -->
-    <section class="section" id="skills" aria-labelledby="skills-title">
-      <div class="container container--narrow">
-        <p class="section__eyebrow">Skills</p>
-        <h2 class="section__title" id="skills-title">What I work with</h2>
-
-        <div class="skill-group reveal">
-          <h3 class="skill-group__title">Back-end development</h3>
-          <ul class="tags">
-            <li>Java</li><li>Spring Boot</li><li>Spring MVC</li><li>Spring Data</li>
-            <li>Spring Security</li><li>Hibernate / JPA</li><li>JDBC / ORM</li>
-            <li>REST</li><li>SOAP</li><li>Microservices</li><li>Monolithic architecture</li>
-          </ul>
-        </div>
-
-        <div class="skill-group reveal">
-          <h3 class="skill-group__title">Front-end development</h3>
-          <ul class="tags">
-            <li>Angular</li><li>Thymeleaf</li>
-          </ul>
-        </div>
-
-        <div class="skill-group reveal">
-          <h3 class="skill-group__title">Databases</h3>
-          <ul class="tags">
-            <li>MySQL</li><li>PostgreSQL</li><li>SQL Server</li><li>Oracle</li><li>Liquibase</li>
-          </ul>
-        </div>
-
-        <div class="skill-group reveal">
-          <h3 class="skill-group__title">Engineering practices &amp; AI</h3>
-          <ul class="tags">
-            <li>Unit / integration / functional testing</li><li>TDD</li><li>JUnit</li><li>Mockito</li>
-            <li>Clean code</li><li>OOP / AOP</li><li>Functional programming</li><li>Design patterns</li>
-            <li>Machine Learning</li><li>Deep Learning</li>
-          </ul>
-        </div>
-
-        <div class="skill-group reveal">
-          <h3 class="skill-group__title">Tools, platforms &amp; methodologies</h3>
-          <ul class="tags">
-            <li>Git</li><li>GitLab</li><li>Maven</li><li>Jenkins</li><li>Jira</li>
-            <li>Postman</li><li>SonarLint</li><li>Scrum</li><li>Agile</li><li>DevOps</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================================================
-         PROJECTS SECTION (deactivated)
-         Uncomment this section and add your projects to show a card
-         grid. Then add a "Projects" item to the nav list above.
-         ============================================================
-         <section class="section section--alt" id="projects" aria-labelledby="projects-title">
-           <div class="container container--narrow">
-             <p class="section__eyebrow">Projects</p>
-             <h2 class="section__title" id="projects-title">Selected projects</h2>
-             <div class="project-grid">
-               <article class="project-card reveal">
-                 <h3>Project name</h3>
-                 <p>Short description of the project, the stack used and what it achieves.</p>
-                 <a href="#" class="project-card__link">View project</a>
-               </article>
-             </div>
-           </div>
-         </section>
-         ============================================================ -->
-
-    <!-- ============================================================
-         SECTION 7: CONTACT
-         mailto form (no backend — the browser opens the visitor's
-         email app with a pre-filled message).
-         ============================================================ -->
-    <section class="section section--alt" id="contact" aria-labelledby="contact-title">
+    <section class="section" id="contact" aria-labelledby="contact-title">
       <div class="container container--narrow">
         <p class="section__eyebrow">Contact</p>
         <h2 class="section__title" id="contact-title">Let's work together</h2>
 
         <div class="contact-grid">
-          <!-- Contact details -->
           <div class="contact-info reveal">
-            <h3 class="contact-info__title">Get in touch</h3>
+            <h3 class="contact-info__title">Contact details</h3>
             <ul class="contact-info__list">
               <li>
                 <span class="contact-info__label">Email</span>
@@ -334,10 +524,14 @@
                 <span class="contact-info__label">Location</span>
                 <span>Fes, Morocco</span>
               </li>
+              <li>
+                <span class="contact-info__label">GitHub</span>
+                <!-- Replace the href with your real profile URL if it changes -->
+                <a href="https://github.com/MAAROUFAbdelfatah" target="_blank" rel="noopener">github.com/MAAROUFAbdelfatah</a>
+              </li>
             </ul>
           </div>
 
-          <!-- Mailto contact form -->
           <form class="contact-form reveal" id="contact-form" novalidate>
             <div class="form-field">
               <label for="field-name">Name</label>
@@ -364,7 +558,14 @@
        ============================================================ -->
   <footer class="site-footer">
     <div class="container">
-      <p>&copy; <span id="year">2026</span> Maarouf Abdelfatah. All rights reserved.</p>
+      <p class="site-footer__name">Maarouf Abdelfatah</p>
+      <p class="site-footer__role">Java / Spring Boot Backend Engineer</p>
+      <ul class="site-footer__links" aria-label="Social links">
+        <li><a href="https://github.com/MAAROUFAbdelfatah" target="_blank" rel="noopener">GitHub</a></li>
+        <li><a href="#" aria-label="LinkedIn (add your URL)">LinkedIn</a></li>
+        <li><a href="mailto:abdelfatahOmaarouf@gmail.com">Email</a></li>
+      </ul>
+      <p class="site-footer__copy">&copy; <span id="year">2026</span> Maarouf Abdelfatah. All rights reserved.</p>
     </div>
   </footer>
 

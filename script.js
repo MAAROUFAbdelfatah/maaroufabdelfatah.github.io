@@ -1,536 +1,803 @@
 /* ==========================================================================
    MAAROUF ABDELFATAH — PORTFOLIO SCRIPTS
-   Vanilla JS. No libraries.
+   Modern vanilla JavaScript engine. Blazing fast, zero external dependencies.
    Features:
-   1. Mobile navigation toggle (+ close on click/Escape/outside click)
-   2. Smooth scrolling for anchor links (with sticky-header offset)
-   3. Active-link highlighting while scrolling (IntersectionObserver)
-   4. Featured Projects rendered from a JS data array
-   5. Research / Publications rendered from a JS data array
-   6. Fade-in-on-scroll for sections (IntersectionObserver)
-   7. Contact form -> mailto (no backend)
-   8. Auto-updating footer year
+   1. Dynamic Dark/Light Theme Switcher (persists in localStorage)
+   2. Reading / Scroll Progress Bar
+   3. Mobile Navigation Menu Toggle with keyboard & outside-click support
+   4. Smooth Scrolling with sticky header compensation
+   5. Active Section ScrollSpy (IntersectionObserver)
+   6. Terminal Code Tabs & Copy-to-Clipboard
+   7. Interactive Projects Filtering by category
+   8. Research & Publications Showcase
+   9. BibTeX / Citation Modal with 1-Click Copy
+   10. Global Toast Notification System
+   11. Contact Form validation & Mailto generator
+   12. Floating Back-to-Top Button
+   13. Scroll Reveal Animations (IntersectionObserver)
+   14. Dynamic Copyright Year
    ========================================================================== */
 
 (function () {
   "use strict";
 
   /* ----------------------------------------------------------------------
-     Small helpers
+     DOM Helpers
      ---------------------------------------------------------------------- */
-  var $ = function (selector, scope) {
-    return (scope || document).querySelector(selector);
-  };
+  const $ = (selector, scope = document) => scope.querySelector(selector);
+  const $$ = (selector, scope = document) => Array.from(scope.querySelectorAll(selector));
 
-  /* Sticky header height. Read from the header element so any change to
-     the CSS (e.g. a taller nav) is picked up automatically. */
-  function getHeaderHeight() {
-    var header = $("#site-header");
-    return header ? header.offsetHeight : 0;
+  /* ----------------------------------------------------------------------
+     1. TOAST NOTIFICATION SYSTEM
+     ---------------------------------------------------------------------- */
+  const toastEl = $("#toast");
+  let toastTimeout = null;
+
+  function showToast(message, duration = 3000) {
+    if (!toastEl) return;
+    const msgEl = toastEl.querySelector(".toast__message");
+    if (msgEl) msgEl.textContent = message;
+    toastEl.classList.add("is-visible");
+
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      toastEl.classList.remove("is-visible");
+    }, duration);
+  }
+
+  // Generic copy helper with toast feedback
+  function copyText(text, label = "Copied to clipboard!") {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(
+        () => showToast(`✓ ${label}`),
+        () => fallbackCopy(text, label)
+      );
+    } else {
+      fallbackCopy(text, label);
+    }
+  }
+
+  function fallbackCopy(text, label) {
+    try {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+      showToast(`✓ ${label}`);
+    } catch (e) {
+      showToast("Could not copy automatically. Please copy manually.");
+    }
   }
 
   /* ----------------------------------------------------------------------
-     1. MOBILE NAVIGATION
+     2. DYNAMIC THEME SWITCHER (Dark default / Light toggle)
      ---------------------------------------------------------------------- */
-  var toggleButton = $("#nav-toggle");
-  var nav = $("#site-header");
-  var navList = $("#primary-menu");
-  var navLinks = navList.querySelectorAll(".nav__link");
+  const themeToggle = $("#theme-toggle");
+  const htmlRoot = document.documentElement;
 
-  function isMenuOpen() {
-    return navList.classList.contains("is-open");
+  function getPreferredTheme() {
+    const saved = localStorage.getItem("portfolio_theme");
+    if (saved) return saved;
+    // Default to dark theme for modern developer aesthetic
+    return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
   }
 
-  function setMenu(open) {
-    // Sync classes between the nav wrapper and the list, and the
-    // aria-expanded attribute so screen readers know the state.
+  function setTheme(theme) {
+    htmlRoot.setAttribute("data-theme", theme);
+    localStorage.setItem("portfolio_theme", theme);
+    if (themeToggle) {
+      themeToggle.setAttribute(
+        "aria-label",
+        theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+      );
+    }
+  }
+
+  // Initial theme setup
+  const currentTheme = getPreferredTheme();
+  setTheme(currentTheme);
+
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const nextTheme = htmlRoot.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      setTheme(nextTheme);
+      showToast(`Theme switched to ${nextTheme} mode`);
+    });
+  }
+
+  /* ----------------------------------------------------------------------
+     3. SCROLL PROGRESS BAR & BACK TO TOP
+     ---------------------------------------------------------------------- */
+  const scrollProgress = $("#scroll-progress");
+  const backToTopBtn = $("#back-to-top");
+
+  function handleScroll() {
+    const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+
+    if (scrollProgress) {
+      scrollProgress.style.width = scrolled + "%";
+    }
+
+    if (backToTopBtn) {
+      if (winScroll > 350) {
+        backToTopBtn.classList.add("is-visible");
+      } else {
+        backToTopBtn.classList.remove("is-visible");
+      }
+    }
+  }
+
+  window.addEventListener("scroll", handleScroll, { passive: true });
+
+  if (backToTopBtn) {
+    backToTopBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  /* ----------------------------------------------------------------------
+     4. HEADER & MOBILE NAVIGATION
+     ---------------------------------------------------------------------- */
+  const header = $("#site-header");
+  const navToggle = $("#nav-toggle");
+  const navList = $("#primary-menu");
+  const navLinks = $$(".nav__link", navList);
+
+  function getHeaderHeight() {
+    return header ? header.offsetHeight : 72;
+  }
+
+  function setMobileMenu(open) {
+    if (!navList || !navToggle) return;
     navList.classList.toggle("is-open", open);
-    nav.classList.toggle("is-open", open);
-    toggleButton.setAttribute("aria-expanded", open ? "true" : "false");
+    if (header) header.classList.toggle("is-open", open);
+    navToggle.setAttribute("aria-expanded", open ? "true" : "false");
   }
 
-  if (toggleButton && navList) {
-    toggleButton.addEventListener("click", function () {
-      setMenu(!isMenuOpen());
+  if (navToggle && navList) {
+    navToggle.addEventListener("click", () => {
+      const isOpen = navList.classList.contains("is-open");
+      setMobileMenu(!isOpen);
     });
 
-    // Close the menu when a link inside it is clicked (mobile behaviour).
-    Array.prototype.forEach.call(navLinks, function (link) {
-      link.addEventListener("click", function () {
-        if (isMenuOpen()) setMenu(false);
-      });
+    navLinks.forEach((link) => {
+      link.addEventListener("click", () => setMobileMenu(false));
     });
 
-    // Close with the Escape key while the menu is open.
-    document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape" && isMenuOpen()) {
-        setMenu(false);
-        toggleButton.focus();
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && navList.classList.contains("is-open")) {
+        setMobileMenu(false);
+        navToggle.focus();
       }
     });
 
-    // Close when clicking outside the header.
-    document.addEventListener("click", function (event) {
-      if (isMenuOpen() && !nav.contains(event.target)) setMenu(false);
+    document.addEventListener("click", (e) => {
+      if (navList.classList.contains("is-open") && !header.contains(e.target)) {
+        setMobileMenu(false);
+      }
     });
   }
 
-  /* ----------------------------------------------------------------------
-     2. SMOOTH SCROLLING
-     Native CSS `scroll-behavior: smooth` handles the easing; this handler
-     additionally accounts for the sticky header height so sections land
-     below the nav instead of underneath it.
-     ---------------------------------------------------------------------- */
-  Array.prototype.forEach.call(navLinks, function (link) {
-    link.addEventListener("click", function (event) {
-      var id = link.getAttribute("href");
-      // Only intercept in-page anchor links.
-      if (!id || id.charAt(0) !== "#") return;
+  // Smooth scroll with sticky header offset
+  navLinks.forEach((link) => {
+    link.addEventListener("click", (e) => {
+      const href = link.getAttribute("href");
+      if (!href || !href.startsWith("#")) return;
 
-      var target = document.querySelector(id);
+      const target = $(href);
       if (!target) return;
 
-      event.preventDefault();
-
-      var top =
-        target.getBoundingClientRect().top + window.pageYOffset - getHeaderHeight() - 8;
-
-      window.scrollTo({ top: top, behavior: "smooth" });
+      e.preventDefault();
+      const top = target.getBoundingClientRect().top + window.pageYOffset - getHeaderHeight() - 12;
+      window.scrollTo({ top, behavior: "smooth" });
     });
   });
 
   /* ----------------------------------------------------------------------
-     3. ACTIVE-LINK HIGHLIGHTING
-     Uses IntersectionObserver: the section whose top crosses a band in the
-     middle of the viewport becomes "active", highlighting its nav link.
+     5. SCROLLSPY (ACTIVE NAV LINK)
      ---------------------------------------------------------------------- */
-  var sections = document.querySelectorAll("section[id]");
-  var linkBySection = {};
-
-  sections.forEach(function (section) {
-    linkBySection[section.id] = $('.nav__link[href="#' + section.id + '"]');
+  const sections = $$("section[id]");
+  const linkBySection = {};
+  sections.forEach((sec) => {
+    linkBySection[sec.id] = $(`.nav__link[href="#${sec.id}"]`);
   });
-
-  function setActiveSection(id) {
-    Object.keys(linkBySection).forEach(function (key) {
-      var link = linkBySection[key];
-      if (link) link.classList.toggle("is-active", key === id);
-    });
-  }
 
   if ("IntersectionObserver" in window && sections.length) {
-    var observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) setActiveSection(entry.target.id);
+    const spyObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            Object.keys(linkBySection).forEach((key) => {
+              const link = linkBySection[key];
+              if (link) link.classList.toggle("is-active", key === id);
+            });
+          }
         });
       },
-      // The section active while its top lives in the mid-40% of the viewport.
-      { rootMargin: "-40% 0px -40% 0px", threshold: 0 }
+      { rootMargin: "-35% 0px -35% 0px", threshold: 0 }
     );
 
-    sections.forEach(function (section) {
-      observer.observe(section);
-    });
-  } else {
-    // Fallback for very old browsers: no scroll-spy behaviour.
-    var homeLink = linkBySection["home"];
-    if (homeLink) homeLink.classList.add("is-active");
+    sections.forEach((sec) => spyObserver.observe(sec));
   }
 
   /* ----------------------------------------------------------------------
-     4. FEATURED PROJECTS (RENDERED FROM A DATA ARRAY)
-     The #projects-grid is filled from this array. Add/edit projects purely
-     in JS — no HTML or CSS changes needed. Newest/strongest first.
-
-     Fields:
-       title      : project name (linked to `link`)
-       role       : your role caption, e.g. "Research & development — co-author"
-       category   : short label drawn on the card media header
-       media      : gradient variant class: "ai" | "ml" | "dm"
-       tags       : category tags (Backend, Full Stack, AI / Machine Learning...)
-       description: 1–2 sentences
-       features   : key technical features (bullets)
-       stack      : main technologies (chips)
-       link       : primary external link (demo, paper, repo...)
-       linkLabel  : label for the primary link button
-       github     : repository URL, or null if you don't have one
-       demo       : live demo URL, or null if not available
-
-     NOTE: The starter entries below are derived from published papers
-     (no fabricated repo/demo links). Replace or extend them with your
-     commercial / personal projects.
+     6. INTERACTIVE TERMINAL
      ---------------------------------------------------------------------- */
-  var projects = [
+  const terminalTabs = $$(".terminal__tab");
+  const terminalPanes = $$(".terminal__pane");
+  const terminalCopyBtn = $("#terminal-copy");
+
+  terminalTabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const targetPaneId = tab.getAttribute("data-tab");
+
+      terminalTabs.forEach((t) => t.classList.toggle("is-active", t === tab));
+      terminalPanes.forEach((p) => p.classList.toggle("is-active", p.id === targetPaneId));
+    });
+  });
+
+  if (terminalCopyBtn) {
+    terminalCopyBtn.addEventListener("click", () => {
+      const activePane = $(".terminal__pane.is-active");
+      if (activePane) {
+        const codeText = activePane.innerText;
+        copyText(codeText, "Terminal code copied to clipboard!");
+      }
+    });
+  }
+
+  /* ----------------------------------------------------------------------
+     7. FEATURED PROJECTS (DYNAMIC RENDERING & FILTERING)
+     ---------------------------------------------------------------------- */
+  const projects = [
     {
+      id: "arsl-transfer",
       title: "Arabic Sign Language Alphabet Recognition (ArSL2018)",
-      role: "Research & development — co-author",
+      role: "Research & Development — Co-Author",
       category: "AI / Deep Learning",
+      categoryKey: "ai",
       media: "ai",
-      tags: ["AI / Machine Learning", "Computer Vision", "Research"],
+      year: "2026",
       description:
         "Transfer-learning framework (InceptionV3) that classifies the 32 Arabic Sign Language alphabet classes on the ArSL2018 dataset (54,049 images), with ablation testing and per-class error analysis.",
       features: [
-        "InceptionV3 transfer learning",
-        "Ablation experiments",
-        "Per-class error analysis",
-        "54,049-image ArSL2018 dataset"
+        "InceptionV3 transfer learning architecture",
+        "Comprehensive ablation experiments",
+        "Per-class confusion & error analysis",
+        "54,049-image benchmark evaluation"
       ],
-      stack: ["Transfer Learning", "InceptionV3", "Convolutional Networks", "Image Classification"],
+      stack: ["Transfer Learning", "InceptionV3", "CNN", "Image Classification", "Python"],
       link: "https://thesai.org/Downloads/Volume17No6/Paper_57-Arabic_Sign_Language_Alphabet_Recognition.pdf",
       linkLabel: "Paper (PDF)",
-      github: null,
-      demo: null
+      bibtex: `@article{maarouf2026arabic,
+  title={Arabic Sign Language Alphabet Recognition Using Transfer Learning: Evaluation, Ablation, and Deployment},
+  author={Maarouf, Abdelfatah and Maarouf, Otman and Benaiss, Abdelaali and El Ayachi, Rachid and Biniz, Mohamed},
+  journal={International Journal of Advanced Computer Science and Applications (IJACSA)},
+  volume={17},
+  number={6},
+  year={2026}
+}`
     },
     {
-      title: "Deep Learning Approach for Arabic Sign Language Alphabet Recognition",
-      role: "Research & development — co-author",
+      id: "arsl-cnn",
+      title: "Deep Learning Approach for Arabic Sign Language Recognition",
+      role: "Research & Development — Co-Author",
       category: "AI / Deep Learning",
+      categoryKey: "ai",
       media: "ai",
-      tags: ["AI / Machine Learning", "Computer Vision", "Research"],
+      year: "2025",
       description:
-        "A CNN classification model for recognizing Arabic Sign Language alphabets, trained and evaluated on an Arabic Sign Language alphabet image dataset; the proposed CNN achieved 99.4% accuracy on the training set and 96.57% accuracy on the test set.",
+        "Convolutional neural network for recognizing Arabic Sign Language alphabets. Achieved 99.4% training accuracy and 96.57% test accuracy, advancing accessibility tools for the hearing-impaired community.",
       features: [
-        "Convolutional neural network classifier",
-        "Arabic Sign Language alphabet recognition",
-        "99.4% train / 96.57% test accuracy"
+        "Custom CNN architecture design",
+        "99.4% train / 96.57% test accuracy",
+        "Sign language alphabet recognition",
+        "High-performance image inference"
       ],
-      stack: ["Deep Learning", "Convolutional Neural Networks", "Image Classification"],
+      stack: ["Deep Learning", "CNN", "Computer Vision", "Accessibility AI"],
       link: "https://sct.ageditor.ar/index.php/sct/article/view/2309",
       linkLabel: "Read Paper",
-      github: null,
-      demo: null
+      doi: "https://doi.org/10.56294/saludcyt20252309",
+      bibtex: `@article{maarouf2025deep,
+  title={Deep Learning Approach for Arabic Sign Language Alphabet Recognition},
+  author={Maarouf, Abdelfatah and Maarouf, Otman and El Ayachi, Rachid and Biniz, Mohamed},
+  journal={Salud, Ciencia y Tecnolog{\'i}a},
+  volume={5},
+  pages={2309},
+  year={2025},
+  doi={10.56294/saludcyt20252309}
+}`
     },
     {
-      title: "Moroccan Sign Language (MSL) dataset",
-      role: "Data curation & research — co-author",
-      category: "Dataset / Computer Vision",
+      id: "msl-dataset",
+      title: "Moroccan Sign Language (MSL) Benchmark Dataset",
+      role: "Data Curation & Research — Co-Author",
+      category: "Dataset / Vision",
+      categoryKey: "cv",
       media: "ai",
-      tags: ["Dataset", "Computer Vision", "Sign Language", "Research"],
+      year: "2025",
       description:
-        "Annotated Moroccan Sign Language (MSL) video clips collected from publicly available online videos, selected for clarity, Arabic subtitles, and diversity in signers (adults and children). Includes 2,310 videos totalling 7 hours, 15 minutes, 19 seconds, covering 2,069 unique words and sentences, with raw .mp4 clips plus extracted normalized 3D keypoints (75 points covering the face, hands, and upper body) in .npy format.",
+        "Annotated Moroccan Sign Language (MSL) benchmark dataset collected and curated under CC BY 4.0. Contains 2,310 videos (7h 15m), 2,069 unique words/sentences, and 75 normalized 3D keypoints per frame.",
       features: [
-        "2,310 annotated video clips",
-        "2,069 unique words and sentences",
-        "75 normalized 3D keypoints (.npy)",
-        "MP4 + keypoint data, CC BY 4.0"
+        "2,310 annotated video clips (7h 15m)",
+        "2,069 unique words & sentences",
+        "75 normalized 3D keypoints (.npy format)",
+        "Hosted on Mendeley Data (CC BY 4.0)"
       ],
-      stack: ["Computer Vision", "Keypoint Extraction", "Machine Learning"],
+      stack: ["Computer Vision", "Keypoint Extraction", "MediaPipe", "Benchmark Dataset"],
       link: "https://data.mendeley.com/datasets/85hhbtykrp/1",
       linkLabel: "View Dataset",
-      github: null,
-      demo: null
+      doi: "https://doi.org/10.17632/85hhbtykrp.1",
+      bibtex: `@dataset{maarouf2025msl,
+  title={Moroccan Sign Language (MSL) dataset},
+  author={Maarouf, Abdelfatah and Maarouf, Otman and El Ayachi, Rachid and Biniz, Mohamed},
+  journal={Mendeley Data},
+  volume={V1},
+  year={2025},
+  doi={10.17632/85hhbtykrp.1}
+}`
     },
     {
+      id: "amazigh-translation",
       title: "English–Amazigh Machine Translation with Transformers",
-      role: "Research & development — co-author",
-      category: "AI / NLP",
+      role: "Research & Development — Co-Author",
+      category: "NLP / Transformers",
+      categoryKey: "nlp",
       media: "ml",
-      tags: ["AI / Machine Learning", "Natural Language Processing", "Research"],
+      year: "2024",
       description:
-        "Neural machine translation for the low-resource Amazigh–English language pair, comparing LSTM, GRU and Transformer architectures on a 137,322-sentence parallel corpus; the Transformer reached 91.37% accuracy.",
+        "Neural machine translation for the low-resource English–Amazigh language pair. Compared LSTM, GRU, and Transformer architectures on a 137,322 parallel sentence corpus; Transformer achieved 91.37% accuracy.",
       features: [
-        "LSTM / GRU / Transformer comparison",
-        "Low-resource parallel corpus (137,322 sentences)",
-        "Top accuracy: Transformer (91.37%)"
+        "LSTM, GRU, and Transformer benchmark",
+        "Low-resource parallel corpus (137,322 pairs)",
+        "Top translation accuracy: Transformer (91.37%)",
+        "Published in IJEECS"
       ],
-      stack: ["Transformers", "LSTM", "GRU", "Machine Translation"],
-      link: "https://doi.org/10.11591/ijeecs.v34.i3",
-      linkLabel: "Paper (DOI)",
-      github: null,
-      demo: null
+      stack: ["Transformers", "NLP", "Sequence-to-Sequence", "Low-Resource MT"],
+      link: "https://www.researchgate.net/publication/381072107_Automatic_translation_from_English_to_Amazigh_using_transformer_learning",
+      linkLabel: "Read Paper",
+      bibtex: `@article{maarouf2024automatic,
+  title={Automatic Translation from English to Amazigh Using Transformer Learning},
+  author={Maarouf, Otman and Maarouf, Abdelfatah and El Ayachi, Rachid and Biniz, Mohamed},
+  journal={Indonesian Journal of Electrical Engineering and Computer Science (IJEECS)},
+  volume={34},
+  number={3},
+  year={2024},
+  doi={10.11591/ijeecs.v34.i3}
+}`
     },
     {
-      title: "Association-Rule Mining on a Diabetic Dataset",
-      role: "Research & development — co-author",
+      id: "diabetic-mining",
+      title: "Association-Rule Mining on Diabetic Dataset (Springer CBI)",
+      role: "Research & Development — Co-Author",
       category: "Data Mining",
+      categoryKey: "dm",
       media: "dm",
-      tags: ["Data Mining", "Research"],
+      year: "2022",
       description:
-        "Evaluation of FP-Growth and its variants (CFP-Growth, ICFP-Growth) for association-rule mining on a diabetic dataset; ICFP-Growth proved the most accurate.",
+        "Comparative evaluation of FP-Growth, CFP-Growth, and ICFP-Growth algorithms for association-rule mining in healthcare clinical records; ICFP-Growth demonstrated the highest accuracy and rule extraction precision.",
       features: [
-        "FP-Growth and its variants",
-        "Association-rule mining",
-        "Best accuracy: ICFP-Growth"
+        "FP-Growth, CFP-Growth & ICFP-Growth algorithms",
+        "Clinical healthcare data pattern discovery",
+        "Evaluated on real diabetic patient cohorts",
+        "Published in Springer LNBIP Vol. 449"
       ],
-      stack: ["FP-Growth", "CFP-Growth", "ICFP-Growth", "Association Rules"],
+      stack: ["Data Mining", "Association Rules", "Algorithms", "Springer"],
       link: "https://doi.org/10.1007/978-3-031-06458-6_12",
-      linkLabel: "Paper (DOI)",
-      github: null,
-      demo: null
+      linkLabel: "Paper (Springer)",
+      bibtex: `@inproceedings{fakir2022mining,
+  title={Mining Frequents Itemset and Association Rules in Diabetic Dataset},
+  author={Fakir, Youssef and Maarouf, Abdelfatah and El Ayachi, Rachid},
+  booktitle={Business Intelligence: 7th International Conference, CBI 2022},
+  series={LNBIP},
+  volume={449},
+  year={2022},
+  publisher={Springer},
+  doi={10.1007/978-3-031-06458-6_12}
+}`
     }
   ];
 
-  var projectsGrid = $("#projects-grid");
-  if (projectsGrid && projects.length) {
-    projectsGrid.innerHTML = projects
-      .map(function (p) {
-        // Optional secondary links (GitHub / demo) — only rendered when set.
-        var extraLinks = "";
-        if (p.github) {
-          extraLinks +=
-            '<a class="btn btn--outline btn--sm" href="' +
-            p.github +
-            '" target="_blank" rel="noopener">GitHub</a>';
-        }
-        if (p.demo) {
-          extraLinks +=
-            '<a class="btn btn--outline btn--sm" href="' +
-            p.demo +
-            '" target="_blank" rel="noopener">Live demo</a>';
-        }
+  const projectsGrid = $("#projects-grid");
+  const filterBtns = $$(".filter-btn");
 
-        return (
-          '<article class="project-card reveal">' +
-            '<div class="project-card__media project-card__media--' + p.media + '">' +
-              '<span class="project-card__cat">' + p.category + "</span>" +
-            "</div>" +
-            '<div class="project-card__body">' +
-              "<h3 class=\"project-card__title\">" +
-                '<a href="' + p.link + '" target="_blank" rel="noopener">' + p.title + "</a>" +
-              "</h3>" +
-              '<p class="project-card__role">' + p.role + "</p>" +
-              '<p class="project-card__desc">' + p.description + "</p>" +
-              '<ul class="project-card__features">' +
-                p.features.map(function (f) { return "<li>" + f + "</li>"; }).join("") +
-              "</ul>" +
-              '<ul class="tags" aria-label="Project technologies">' +
-                p.stack.map(function (t) { return "<li>" + t + "</li>"; }).join("") +
-              "</ul>" +
-              '<div class="project-card__links">' +
-                '<a class="btn btn--primary btn--sm" href="' + p.link + '" target="_blank" rel="noopener">' + p.linkLabel + "</a>" +
-                extraLinks +
-              "</div>" +
-            "</div>" +
-          "</article>"
-        );
+  function renderProjects(filter = "all") {
+    if (!projectsGrid) return;
+
+    const filtered = filter === "all" ? projects : projects.filter((p) => p.categoryKey === filter);
+
+    projectsGrid.innerHTML = filtered
+      .map((p) => {
+        const doiBtn = p.doi
+          ? `<a class="btn btn--outline btn--sm" href="${p.doi}" target="_blank" rel="noopener">DOI</a>`
+          : "";
+
+        return `
+          <article class="project-card reveal is-visible" data-id="${p.id}">
+            <div class="project-card__media project-card__media--${p.media}">
+              <div class="project-card__badge-row">
+                <span class="project-card__cat">${p.category}</span>
+                <span class="project-card__year">${p.year}</span>
+              </div>
+            </div>
+            <div class="project-card__body">
+              <h3 class="project-card__title">
+                <a href="${p.link}" target="_blank" rel="noopener">${p.title}</a>
+              </h3>
+              <p class="project-card__role">${p.role}</p>
+              <p class="project-card__desc">${p.description}</p>
+              <ul class="project-card__features">
+                ${p.features.map((f) => `<li>${f}</li>`).join("")}
+              </ul>
+              <ul class="tags" aria-label="Project technologies">
+                ${p.stack.map((t) => `<li>${t}</li>`).join("")}
+              </ul>
+              <div class="project-card__links">
+                <a class="btn btn--primary btn--sm" href="${p.link}" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                  ${p.linkLabel}
+                </a>
+                ${doiBtn}
+                <button class="btn btn--outline btn--sm btn-cite" type="button" data-cite-id="${p.id}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                  Cite
+                </button>
+              </div>
+            </div>
+          </article>
+        `;
       })
       .join("");
+
+    attachCiteListeners();
   }
 
-  /* ----------------------------------------------------------------------
-     5. RESEARCH / PUBLICATIONS (RENDERED FROM A DATA ARRAY)
-     The #research-publications-list is filled from this array. Add/edit
-     entries purely in JS.
+  // Filter button interactions
+  filterBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      filterBtns.forEach((b) => b.classList.toggle("is-active", b === btn));
+      const filter = btn.getAttribute("data-filter");
+      renderProjects(filter);
+    });
+  });
 
-     Fields:
-       title     : paper / dataset title (linked to `link`)
-       authors   : full author list
-       venue     : journal / conference / repository + volume / version
-       year      : publication year
-       status    : e.g. "Published" — placeholder only if unknown
-       type      : optional category badge text (e.g. "Dataset", "Research Paper")
-       topics    : research topics / keywords (chips)
-       summary   : 1–2 sentence description of the contribution
-       link      : URL (article, DOI or dataset page)
-       doi       : optional DOI URL rendered as a second link
-       linkLabel : optional label for `link` (defaults to "Read paper")
-       doiLabel  : optional label for `doi` (defaults to "DOI")
-       featured  : true gives the AI / sign-language paper a highlighted card
+  /* ----------------------------------------------------------------------
+     8. RESEARCH & PUBLICATIONS RENDERER
      ---------------------------------------------------------------------- */
-  var publications = [
+  const publications = [
     {
-      title:
-        "Arabic Sign Language Alphabet Recognition Using Transfer Learning: Evaluation, Ablation, and Deployment",
-      authors:
-        "Abdelfatah Maarouf, Otman Maarouf, Abdelaali Benaiss, Rachid El Ayachi, Mohamed Biniz",
+      id: "pub-ijacsa-2026",
+      type: "Research Paper",
+      title: "Arabic Sign Language Alphabet Recognition Using Transfer Learning: Evaluation, Ablation, and Deployment",
+      authors: "Abdelfatah Maarouf, Otman Maarouf, Abdelaali Benaiss, Rachid El Ayachi, Mohamed Biniz",
       venue: "International Journal of Advanced Computer Science and Applications (IJACSA), Vol. 17, No. 6",
       year: "2026",
       status: "Published",
-      topics: ["Arabic Sign Language Recognition", "Computer Vision", "Deep Learning", "Transfer Learning"],
+      featured: true,
+      topics: ["Arabic Sign Language Recognition", "Computer Vision", "Deep Learning", "Transfer Learning", "InceptionV3"],
       summary:
-        "A transfer-learning (InceptionV3) framework for classifying Arabic Sign Language alphabets on the ArSL2018 dataset (54,049 images), evaluated through ablation testing and per-class error analysis.",
-      link: "https://thesai.org/Downloads/Volume17No6/Paper_57-Arabic_Sign_Language_Alphabet_Recognition.pdf"
+        "A transfer-learning (InceptionV3) framework for classifying Arabic Sign Language alphabets on the ArSL2018 dataset (54,049 images), rigorously evaluated through ablation testing and per-class error analysis for real-world deployment.",
+      link: "https://thesai.org/Downloads/Volume17No6/Paper_57-Arabic_Sign_Language_Alphabet_Recognition.pdf",
+      bibtex: `@article{maarouf2026arabic,
+  title={Arabic Sign Language Alphabet Recognition Using Transfer Learning: Evaluation, Ablation, and Deployment},
+  author={Maarouf, Abdelfatah and Maarouf, Otman and Benaiss, Abdelaali and El Ayachi, Rachid and Biniz, Mohamed},
+  journal={International Journal of Advanced Computer Science and Applications (IJACSA)},
+  volume={17},
+  number={6},
+  year={2026}
+}`
     },
     {
+      id: "pub-sct-2025",
       type: "Research Paper",
       title: "Deep Learning Approach for Arabic Sign Language Alphabet Recognition",
       authors: "Abdelfatah Maarouf, Otman Maarouf, Rachid El Ayachi, Mohamed Biniz",
       venue: "Salud, Ciencia y Tecnología, Vol. 5, Article 2309",
       year: "2025",
       status: "Published",
-      topics: ["Arabic Sign Language Alphabets", "Deep Learning", "Convolutional Neural Network", "ArSL2018"],
+      topics: ["Arabic Sign Language", "Deep Learning", "CNN", "ArSL2018", "Accessibility AI"],
       summary:
-        "A CNN classification model for recognizing Arabic Sign Language alphabets, trained and evaluated on an Arabic Sign Language alphabet image dataset. The proposed CNN achieved 99.4% accuracy on the training set and 96.57% accuracy on the test set, highlighting the potential of deep learning for sign-language recognition and accessibility for individuals with hearing disabilities.",
+        "A CNN classification model for recognizing Arabic Sign Language alphabets, trained and evaluated on an Arabic Sign Language alphabet image dataset. The proposed CNN achieved 99.4% accuracy on training and 96.57% accuracy on test data, emphasizing accessibility for deaf and hard-of-hearing individuals.",
       link: "https://sct.ageditor.ar/index.php/sct/article/view/2309",
       doi: "https://doi.org/10.56294/saludcyt20252309",
-      linkLabel: "Read Paper"
+      bibtex: `@article{maarouf2025deep,
+  title={Deep Learning Approach for Arabic Sign Language Alphabet Recognition},
+  author={Maarouf, Abdelfatah and Maarouf, Otman and El Ayachi, Rachid and Biniz, Mohamed},
+  journal={Salud, Ciencia y Tecnolog{\'i}a},
+  volume={5},
+  pages={2309},
+  year={2025},
+  doi={10.56294/saludcyt20252309}
+}`
     },
     {
-      type: "Dataset",
-      title: "Moroccan Sign Language (MSL) dataset",
+      id: "pub-msl-2025",
+      type: "Benchmark Dataset",
+      title: "Moroccan Sign Language (MSL) Dataset",
       authors: "Abdelfatah Maarouf, Otman Maarouf, Rachid El Ayachi, Mohamed Biniz",
       venue: "Mendeley Data, Version 1",
       year: "2025",
       status: "Published",
-      topics: ["Moroccan Sign Language", "Machine Learning", "Computer Vision", "Sign Language Recognition", "Human-Computer Interaction"],
+      topics: ["Moroccan Sign Language", "Computer Vision", "3D Keypoints", "Benchmark Dataset", "HCI"],
       summary:
-        "Annotated video clips of Moroccan Sign Language (MSL) collected from publicly available online videos, selected for clarity, Arabic subtitles, and diversity in signers (adults and children). The dataset includes 2,310 videos totalling 7 hours, 15 minutes, 19 seconds, covering 2,069 unique words and sentences, with raw .mp4 clips plus extracted normalized 3D keypoints (75 tracked points covering the face, hands, and upper body) in .npy format.",
+        "Annotated video dataset of Moroccan Sign Language (MSL) containing 2,310 videos across 2,069 distinct words and phrases (7 hours, 15 minutes total). Delivered with raw MP4 video files and extracted normalized 3D keypoints (75 key landmarks across face, hands, and upper torso) in NumPy .npy format under CC BY 4.0.",
       link: "https://data.mendeley.com/datasets/85hhbtykrp/1",
       doi: "https://doi.org/10.17632/85hhbtykrp.1",
-      linkLabel: "View Dataset"
+      bibtex: `@dataset{maarouf2025msl,
+  title={Moroccan Sign Language (MSL) dataset},
+  author={Maarouf, Abdelfatah and Maarouf, Otman and El Ayachi, Rachid and Biniz, Mohamed},
+  journal={Mendeley Data},
+  volume={V1},
+  year={2025},
+  doi={10.17632/85hhbtykrp.1}
+}`
     },
     {
+      id: "pub-ijeecs-2024",
+      type: "Research Paper",
       title: "Automatic Translation from English to Amazigh Using Transformer Learning",
       authors: "Otman Maarouf, Abdelfatah Maarouf, Rachid El Ayachi, Mohamed Biniz",
       venue: "Indonesian Journal of Electrical Engineering and Computer Science (IJEECS), Vol. 34, No. 3",
       year: "2024",
       status: "Published",
-      topics: ["Machine Translation", "Natural Language Processing", "Deep Learning"],
+      topics: ["Machine Translation", "Natural Language Processing", "Transformers", "Amazigh Language"],
       summary:
-        "Neural machine translation models (LSTM, GRU, Transformer) for the low-resource Amazigh–English language pair, trained on a 137,322-sentence parallel corpus; the Transformer achieved the highest accuracy (91.37%).",
-      link: "https://doi.org/10.11591/ijeecs.v34.i3"
+        "Neural machine translation architectures (LSTM, GRU, Transformer) evaluated on a 137,322-sentence English-Amazigh parallel corpus; the Transformer configuration reached 91.37% translation accuracy.",
+      link: "https://www.researchgate.net/publication/381072107_Automatic_translation_from_English_to_Amazigh_using_transformer_learning",
+      doi: "https://doi.org/10.11591/ijeecs.v34.i3",
+      bibtex: `@article{maarouf2024automatic,
+  title={Automatic Translation from English to Amazigh Using Transformer Learning},
+  author={Maarouf, Otman and Maarouf, Abdelfatah and El Ayachi, Rachid and Biniz, Mohamed},
+  journal={Indonesian Journal of Electrical Engineering and Computer Science (IJEECS)},
+  volume={34},
+  number={3},
+  year={2024},
+  doi={10.11591/ijeecs.v34.i3}
+}`
     },
     {
+      id: "pub-springer-2022",
+      type: "Conference Paper",
       title: "Mining Frequents Itemset and Association Rules in Diabetic Dataset",
       authors: "Youssef Fakir, Abdelfatah Maarouf, Rachid El Ayachi",
       venue: "Business Intelligence, CBI 2022 — Springer, LNBIP vol. 449",
       year: "2022",
       status: "Published",
-      topics: ["Data Mining", "Association Rules"],
+      topics: ["Data Mining", "Association Rules", "Healthcare Informatics", "ICFP-Growth"],
       summary:
-        "FP-Growth and its variants (CFP-Growth, ICFP-Growth) applied to a diabetic dataset for association-rule mining; ICFP-Growth was found to be the most accurate.",
-      link: "https://doi.org/10.1007/978-3-031-06458-6_12"
+        "Comparative benchmark of FP-Growth, CFP-Growth, and ICFP-Growth algorithms for association-rule mining on diabetic clinical records; ICFP-Growth achieved optimal precision and rule compaction.",
+      link: "https://doi.org/10.1007/978-3-031-06458-6_12",
+      bibtex: `@inproceedings{fakir2022mining,
+  title={Mining Frequents Itemset and Association Rules in Diabetic Dataset},
+  author={Fakir, Youssef and Maarouf, Abdelfatah and El Ayachi, Rachid},
+  booktitle={Business Intelligence: 7th International Conference, CBI 2022},
+  series={LNBIP},
+  volume={449},
+  year={2022},
+  publisher={Springer},
+  doi={10.1007/978-3-031-06458-6_12}
+}`
     }
   ];
 
-  var pubList = $("#research-publications-list");
-  if (pubList && publications.length) {
+  const pubList = $("#research-publications-list");
+
+  function renderPublications() {
+    if (!pubList) return;
+
     pubList.innerHTML = publications
-      .map(function (pub) {
-        var topics = pub.topics
-          ? '<ul class="tags tags--accent pub-card__topics" aria-label="Research topics">' +
-              pub.topics.map(function (t) { return "<li>" + t + "</li>"; }).join("") +
-            "</ul>"
+      .map((pub) => {
+        // Highlight "Abdelfatah Maarouf" in bold for clear identity
+        const formattedAuthors = pub.authors
+          .replace("Abdelfatah Maarouf", "<strong>Abdelfatah Maarouf</strong>")
+          .replace("Maarouf Abdelfatah", "<strong>Maarouf Abdelfatah</strong>");
+
+        const doiLink = pub.doi
+          ? `<a class="btn btn--outline btn--sm" href="${pub.doi}" target="_blank" rel="noopener">DOI</a>`
           : "";
 
-        var statusBadge =
-          '<span class="badge badge--' +
-          (pub.status === "Published" ? "published" : "featured") +
-          '">' +
-          pub.status +
-          "</span>";
-
-        var typeBadge = pub.type
-          ? '<span class="badge badge--featured">' + pub.type + "</span>"
-          : "";
-
-        var links =
-          '<div class="pub-card__links">' +
-            '<a class="pub-card__link" href="' + pub.link + '" target="_blank" rel="noopener noreferrer">' +
-              (pub.linkLabel || "Read paper") +
-            "</a>" +
-            (pub.doi
-              ? '<a class="pub-card__link" href="' + pub.doi + '" target="_blank" rel="noopener noreferrer">' +
-                  (pub.doiLabel || "DOI") +
-                "</a>"
-              : "") +
-          "</div>";
-
-        return (
-          '<li class="pub-item reveal">' +
-            '<article class="pub-card' + (pub.featured ? " pub-card--featured" : "") + '">' +
-              '<div class="pub-card__head">' +
-                typeBadge +
-                statusBadge +
-                '<time class="pub-card__year">' + pub.year + "</time>" +
-              "</div>" +
-              "<h3 class=\"pub-card__title\">" +
-                '<a href="' + pub.link + '" target="_blank" rel="noopener noreferrer">' + pub.title + "</a>" +
-              "</h3>" +
-              '<p class="pub-card__authors">' + pub.authors + "</p>" +
-              '<p class="pub-card__venue">' + pub.venue + "</p>" +
-              topics +
-              '<p class="pub-card__summary">' + pub.summary + "</p>" +
-              links +
-            "</article>" +
-          "</li>"
-        );
+        return `
+          <li class="pub-item reveal is-visible">
+            <article class="pub-card ${pub.featured ? "pub-card--featured" : ""}">
+              <div class="pub-card__head">
+                <span class="badge badge--featured">${pub.type}</span>
+                <span class="badge badge--published">${pub.status}</span>
+                <time class="pub-card__year">${pub.year}</time>
+              </div>
+              <h3 class="pub-card__title">
+                <a href="${pub.link}" target="_blank" rel="noopener">${pub.title}</a>
+              </h3>
+              <p class="pub-card__authors">${formattedAuthors}</p>
+              <p class="pub-card__venue">${pub.venue}</p>
+              <ul class="tags tags--accent" aria-label="Research topics">
+                ${pub.topics.map((t) => `<li>${t}</li>`).join("")}
+              </ul>
+              <p class="pub-card__summary">${pub.summary}</p>
+              <div class="pub-card__links">
+                <a class="btn btn--primary btn--sm" href="${pub.link}" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                  Read Paper
+                </a>
+                ${doiLink}
+                <button class="btn btn--outline btn--sm btn-cite" type="button" data-pub-id="${pub.id}">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                  BibTeX Citation
+                </button>
+              </div>
+            </article>
+          </li>
+        `;
       })
       .join("");
+
+    attachCiteListeners();
   }
 
   /* ----------------------------------------------------------------------
-     6. FADE-IN-ON-SCROLL
-     Elements with the `.reveal` class animate in the first time they enter
-     the viewport. Once visible they are un-observed (single animation).
-     Note: this block runs AFTER the renderers above so that newly created
-     `.reveal` cards (projects + publications) are observed too.
+     9. BIBTEX / CITATION MODAL
      ---------------------------------------------------------------------- */
-  var revealItems = document.querySelectorAll(".reveal");
+  const modalBackdrop = $("#citation-modal");
+  const modalTitle = $("#modal-title");
+  const modalCode = $("#modal-code");
+  const modalCloseBtn = $("#modal-close");
+  const modalCopyBtn = $("#modal-copy-btn");
 
-  if ("IntersectionObserver" in window && revealItems.length) {
-    var revealObserver = new IntersectionObserver(
-      function (entries, observer) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target); // animate only once
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
+  let activeBibtex = "";
 
-    revealItems.forEach(function (item) {
-      revealObserver.observe(item);
+  function openCitationModal(title, bibtex) {
+    if (!modalBackdrop) return;
+    activeBibtex = bibtex;
+    if (modalTitle) modalTitle.textContent = `Citation: ${title}`;
+    if (modalCode) modalCode.textContent = bibtex;
+    modalBackdrop.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeCitationModal() {
+    if (!modalBackdrop) return;
+    modalBackdrop.classList.remove("is-open");
+    document.body.style.overflow = "";
+  }
+
+  if (modalCloseBtn) modalCloseBtn.addEventListener("click", closeCitationModal);
+  if (modalBackdrop) {
+    modalBackdrop.addEventListener("click", (e) => {
+      if (e.target === modalBackdrop) closeCitationModal();
     });
-  } else {
-    // Fallback: show everything immediately.
-    revealItems.forEach(function (item) {
-      item.classList.add("is-visible");
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modalBackdrop && modalBackdrop.classList.contains("is-open")) {
+      closeCitationModal();
+    }
+  });
+
+  if (modalCopyBtn) {
+    modalCopyBtn.addEventListener("click", () => {
+      copyText(activeBibtex, "BibTeX citation copied to clipboard!");
+    });
+  }
+
+  function attachCiteListeners() {
+    $$(".btn-cite").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const projectId = btn.getAttribute("data-cite-id");
+        const pubId = btn.getAttribute("data-pub-id");
+
+        let item = null;
+        if (projectId) {
+          item = projects.find((p) => p.id === projectId);
+        } else if (pubId) {
+          item = publications.find((p) => p.id === pubId);
+        }
+
+        if (item && item.bibtex) {
+          openCitationModal(item.title, item.bibtex);
+        }
+      });
     });
   }
 
   /* ----------------------------------------------------------------------
-     7. CONTACT FORM -> MAILTO
-     No backend on GitHub Pages: on submit we validate the fields and open
-     the visitor's email application with a pre-filled message addressed to
-     you. The form genuinely works (it never silently drops a message).
+     10. COPY BUTTONS (Email, Phone, Quick Buttons)
      ---------------------------------------------------------------------- */
-  var form = $("#contact-form");
+  $$("[data-copy-text]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const textToCopy = btn.getAttribute("data-copy-text");
+      const label = btn.getAttribute("data-copy-label") || "Copied to clipboard!";
+      copyText(textToCopy, label);
+    });
+  });
 
-  if (form) {
-    var note = $("#form-note");
-    var recipient = "abdelfatah0maarouf@gmail.com"; // <-- your email address
+  /* ----------------------------------------------------------------------
+     11. CONTACT FORM WITH REAL VALIDATION & MAILTO DISPATCH
+     ---------------------------------------------------------------------- */
+  const contactForm = $("#contact-form");
+  if (contactForm) {
+    const note = $("#form-note");
+    const recipient = "abdelfatah0maarouf@gmail.com";
 
-    form.addEventListener("submit", function (event) {
-      event.preventDefault();
+    contactForm.addEventListener("submit", (e) => {
+      e.preventDefault();
 
-      var name = form.elements["name"].value.trim();
-      var email = form.elements["email"].value.trim();
-      var message = form.elements["message"].value.trim();
+      const nameInput = contactForm.elements["name"];
+      const emailInput = contactForm.elements["email"];
+      const msgInput = contactForm.elements["message"];
 
-      // Simple validation with a friendly status message.
+      const name = nameInput ? nameInput.value.trim() : "";
+      const email = emailInput ? emailInput.value.trim() : "";
+      const message = msgInput ? msgInput.value.trim() : "";
+
       if (!name || !email || !message) {
-        setNote("Please fill in all fields before sending.", "error");
+        if (note) {
+          note.textContent = "Please fill in your name, email, and message.";
+          note.setAttribute("data-state", "error");
+        }
         return;
       }
 
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        setNote("Please enter a valid email address.", "error");
+        if (note) {
+          note.textContent = "Please enter a valid email address.";
+          note.setAttribute("data-state", "error");
+        }
         return;
       }
 
-      // Compose the mailto URL (encodeURIComponent handles special chars).
-      var subject = encodeURIComponent("Message from " + name + " (portfolio)");
-      var body = encodeURIComponent("Hi Maarouf,\n\n" + message + "\n\n— " + name + "\nReply to: " + email);
-      var url = "mailto:" + recipient + "?subject=" + subject + "&body=" + body;
+      const subject = encodeURIComponent(`Portfolio Inquiry from ${name}`);
+      const body = encodeURIComponent(
+        `Hi Maarouf,\n\n${message}\n\n— Best regards,\n${name}\nEmail: ${email}`
+      );
+      const mailtoUrl = `mailto:${recipient}?subject=${subject}&body=${body}`;
 
-      window.location.href = url;
-      setNote("Opening your email app — thanks for reaching out!", "ok");
+      window.location.href = mailtoUrl;
+
+      if (note) {
+        note.textContent = "Opening your email client with your drafted message. Thank you!";
+        note.setAttribute("data-state", "ok");
+      }
+      showToast("✓ Opening your email application!");
     });
+  }
 
-    function setNote(text, state) {
-      note.textContent = text;
-      note.setAttribute("data-state", state);
+  /* ----------------------------------------------------------------------
+     12. SCROLL REVEAL (INTERSECTION OBSERVER)
+     ---------------------------------------------------------------------- */
+  function initReveal() {
+    const reveals = $$(".reveal");
+    if ("IntersectionObserver" in window && reveals.length) {
+      const revealObserver = new IntersectionObserver(
+        (entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      reveals.forEach((el) => revealObserver.observe(el));
+    } else {
+      reveals.forEach((el) => el.classList.add("is-visible"));
     }
   }
 
   /* ----------------------------------------------------------------------
-     8. FOOTER YEAR
-     Keeps the copyright year current without manual edits.
+     13. INITIALIZE PAGE
      ---------------------------------------------------------------------- */
-  var yearEl = $("#year");
+  renderProjects("all");
+  renderPublications();
+  initReveal();
+
+  const yearEl = $("#year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 })();

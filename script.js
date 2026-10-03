@@ -183,6 +183,45 @@
       demo: null
     },
     {
+      title: "Deep Learning Approach for Arabic Sign Language Alphabet Recognition",
+      role: "Research & development — co-author",
+      category: "AI / Deep Learning",
+      media: "ai",
+      tags: ["AI / Machine Learning", "Computer Vision", "Research"],
+      description:
+        "A CNN classification model for recognizing Arabic Sign Language alphabets, trained and evaluated on an Arabic Sign Language alphabet image dataset; the proposed CNN achieved 99.4% accuracy on the training set and 96.57% accuracy on the test set.",
+      features: [
+        "Convolutional neural network classifier",
+        "Arabic Sign Language alphabet recognition",
+        "99.4% train / 96.57% test accuracy"
+      ],
+      stack: ["Deep Learning", "Convolutional Neural Networks", "Image Classification"],
+      link: "https://sct.ageditor.ar/index.php/sct/article/view/2309",
+      linkLabel: "Read Paper",
+      github: null,
+      demo: null
+    },
+    {
+      title: "Moroccan Sign Language (MSL) dataset",
+      role: "Data curation & research — co-author",
+      category: "Dataset / Computer Vision",
+      media: "ai",
+      tags: ["Dataset", "Computer Vision", "Sign Language", "Research"],
+      description:
+        "Annotated Moroccan Sign Language (MSL) video clips collected from publicly available online videos, selected for clarity, Arabic subtitles, and diversity in signers (adults and children). Includes 2,310 videos totalling 7 hours, 15 minutes, 19 seconds, covering 2,069 unique words and sentences, with raw .mp4 clips plus extracted normalized 3D keypoints (75 points covering the face, hands, and upper body) in .npy format.",
+      features: [
+        "2,310 annotated video clips",
+        "2,069 unique words and sentences",
+        "75 normalized 3D keypoints (.npy)",
+        "MP4 + keypoint data, CC BY 4.0"
+      ],
+      stack: ["Computer Vision", "Keypoint Extraction", "Machine Learning"],
+      link: "https://data.mendeley.com/datasets/85hhbtykrp/1",
+      linkLabel: "View Dataset",
+      github: null,
+      demo: null
+    },
+    {
       title: "English–Amazigh Machine Translation with Transformers",
       role: "Research & development — co-author",
       category: "AI / NLP",
@@ -275,14 +314,18 @@
      entries purely in JS.
 
      Fields:
-       title     : paper title (linked to `link`)
+       title     : paper / dataset title (linked to `link`)
        authors   : full author list
-       venue     : journal / conference + volume / issue
+       venue     : journal / conference / repository + volume / version
        year      : publication year
        status    : e.g. "Published" — placeholder only if unknown
-       topics    : research topics / paper keywords (chips)
+       type      : optional category badge text (e.g. "Dataset", "Research Paper")
+       topics    : research topics / keywords (chips)
        summary   : 1–2 sentence description of the contribution
-       link      : URL (DOI or PDF)
+       link      : URL (article, DOI or dataset page)
+       doi       : optional DOI URL rendered as a second link
+       linkLabel : optional label for `link` (defaults to "Read paper")
+       doiLabel  : optional label for `doi` (defaults to "DOI")
        featured  : true gives the AI / sign-language paper a highlighted card
      ---------------------------------------------------------------------- */
   var publications = [
@@ -297,8 +340,35 @@
       topics: ["Arabic Sign Language Recognition", "Computer Vision", "Deep Learning", "Transfer Learning"],
       summary:
         "A transfer-learning (InceptionV3) framework for classifying Arabic Sign Language alphabets on the ArSL2018 dataset (54,049 images), evaluated through ablation testing and per-class error analysis.",
-      link: "https://thesai.org/Downloads/Volume17No6/Paper_57-Arabic_Sign_Language_Alphabet_Recognition.pdf",
-      featured: true
+      link: "https://thesai.org/Downloads/Volume17No6/Paper_57-Arabic_Sign_Language_Alphabet_Recognition.pdf"
+    },
+    {
+      type: "Research Paper",
+      title: "Deep Learning Approach for Arabic Sign Language Alphabet Recognition",
+      authors: "Abdelfatah Maarouf, Otman Maarouf, Rachid El Ayachi, Mohamed Biniz",
+      venue: "Salud, Ciencia y Tecnología, Vol. 5, Article 2309",
+      year: "2025",
+      status: "Published",
+      topics: ["Arabic Sign Language Alphabets", "Deep Learning", "Convolutional Neural Network", "ArSL2018"],
+      summary:
+        "A CNN classification model for recognizing Arabic Sign Language alphabets, trained and evaluated on an Arabic Sign Language alphabet image dataset. The proposed CNN achieved 99.4% accuracy on the training set and 96.57% accuracy on the test set, highlighting the potential of deep learning for sign-language recognition and accessibility for individuals with hearing disabilities.",
+      link: "https://sct.ageditor.ar/index.php/sct/article/view/2309",
+      doi: "https://doi.org/10.56294/saludcyt20252309",
+      linkLabel: "Read Paper"
+    },
+    {
+      type: "Dataset",
+      title: "Moroccan Sign Language (MSL) dataset",
+      authors: "Abdelfatah Maarouf, Otman Maarouf, Rachid El Ayachi, Mohamed Biniz",
+      venue: "Mendeley Data, Version 1",
+      year: "2025",
+      status: "Published",
+      topics: ["Moroccan Sign Language", "Machine Learning", "Computer Vision", "Sign Language Recognition", "Human-Computer Interaction"],
+      summary:
+        "Annotated video clips of Moroccan Sign Language (MSL) collected from publicly available online videos, selected for clarity, Arabic subtitles, and diversity in signers (adults and children). The dataset includes 2,310 videos totalling 7 hours, 15 minutes, 19 seconds, covering 2,069 unique words and sentences, with raw .mp4 clips plus extracted normalized 3D keypoints (75 tracked points covering the face, hands, and upper body) in .npy format.",
+      link: "https://data.mendeley.com/datasets/85hhbtykrp/1",
+      doi: "https://doi.org/10.17632/85hhbtykrp.1",
+      linkLabel: "View Dataset"
     },
     {
       title: "Automatic Translation from English to Amazigh Using Transformer Learning",
@@ -341,23 +411,38 @@
           pub.status +
           "</span>";
 
+        var typeBadge = pub.type
+          ? '<span class="badge badge--featured">' + pub.type + "</span>"
+          : "";
+
+        var links =
+          '<div class="pub-card__links">' +
+            '<a class="pub-card__link" href="' + pub.link + '" target="_blank" rel="noopener noreferrer">' +
+              (pub.linkLabel || "Read paper") +
+            "</a>" +
+            (pub.doi
+              ? '<a class="pub-card__link" href="' + pub.doi + '" target="_blank" rel="noopener noreferrer">' +
+                  (pub.doiLabel || "DOI") +
+                "</a>"
+              : "") +
+          "</div>";
+
         return (
           '<li class="pub-item reveal">' +
             '<article class="pub-card' + (pub.featured ? " pub-card--featured" : "") + '">' +
               '<div class="pub-card__head">' +
+                typeBadge +
                 statusBadge +
                 '<time class="pub-card__year">' + pub.year + "</time>" +
               "</div>" +
               "<h3 class=\"pub-card__title\">" +
-                '<a href="' + pub.link + '" target="_blank" rel="noopener">' + pub.title + "</a>" +
+                '<a href="' + pub.link + '" target="_blank" rel="noopener noreferrer">' + pub.title + "</a>" +
               "</h3>" +
               '<p class="pub-card__authors">' + pub.authors + "</p>" +
               '<p class="pub-card__venue">' + pub.venue + "</p>" +
               topics +
               '<p class="pub-card__summary">' + pub.summary + "</p>" +
-              '<a class="pub-card__link" href="' + pub.link + '" target="_blank" rel="noopener">' +
-                "Read paper" +
-              "</a>" +
+              links +
             "</article>" +
           "</li>"
         );
